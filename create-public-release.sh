@@ -20,14 +20,11 @@ cd $RUN_PATH
 ./step-update-copyrights.sh
 ./step-clean-compile.sh
 ./step-upload-bintray.sh
-./step-create-docker-image.sh
-./step-upload-docker-image.sh
 ./step-git-tag.sh
 
 echo ----[ Operation completed successfully ]----
 
 echo
-echo You can see published items on 
+echo You can see published items on
 echo https://bintray.com/foilen/maven
-echo https://hub.docker.com/r/foilen/foilen-infra-plugin-app-test-docker/
 echo You can send the tag: git push --tags

@@ -15,4 +15,3 @@ cd $RUN_PATH
 
 ./step-update-copyrights.sh
 ./step-clean-compile.sh
-./step-create-docker-image.sh

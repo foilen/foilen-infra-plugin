@@ -9,6 +9,8 @@
  */
 package com.foilen.infra.plugin.v1.core.visual.helper;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -413,6 +415,32 @@ public class CommonValidation {
             errors.add(new Tuple2<>(fieldPasswordConf, "error.notSamePassword"));
         }
 
+        return errors;
+    }
+
+    public static List<Tuple2<String, String>> validateUrl(Map<String, String> formValues) {
+        Set<String> fieldNames = formValues.keySet();
+        return validateUrl(formValues, fieldNames.toArray(new String[fieldNames.size()]));
+    }
+
+    public static List<Tuple2<String, String>> validateUrl(Map<String, String> formValues, String... fieldNames) {
+        List<Tuple2<String, String>> errors = new ArrayList<>();
+        for (String fieldName : CommonFieldHelper.getAllFieldNames(formValues, fieldNames)) {
+            String fieldValue = formValues.get(fieldName);
+            errors.addAll(validateUrl(fieldName, fieldValue));
+        }
+        return errors;
+    }
+
+    public static List<Tuple2<String, String>> validateUrl(String fieldName, String fieldValue) {
+        List<Tuple2<String, String>> errors = new ArrayList<>();
+        if (!Strings.isNullOrEmpty(fieldValue)) {
+            try {
+                new URL(fieldValue);
+            } catch (MalformedURLException e) {
+                errors.add(new Tuple2<>(fieldName, "error.notUrl"));
+            }
+        }
         return errors;
     }
 

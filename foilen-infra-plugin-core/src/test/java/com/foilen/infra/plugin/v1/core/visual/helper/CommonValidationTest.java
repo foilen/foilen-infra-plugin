@@ -121,6 +121,13 @@ public class CommonValidationTest {
         Assert.assertEquals(isValid, errors.isEmpty());
     }
 
+    private void assertUrl(String value, boolean isValid) {
+        Map<String, String> map = new HashMap<>();
+        map.put(fieldName, value);
+        List<Tuple2<String, String>> errors = CommonValidation.validateUrl(map, fieldName);
+        Assert.assertEquals(isValid, errors.isEmpty());
+    }
+
     private void assertValues(List<Tuple2<String, String>> errors, List<Boolean> isValids) {
         for (int i = 0; i < isValids.size(); ++i) {
             String positionFieldName = fieldName + "[" + i + "]";
@@ -258,6 +265,18 @@ public class CommonValidationTest {
         assertNotNullOrEmpty(null, false);
 
         assertNotNullOrEmpty(Arrays.asList("abc", null), Arrays.asList(true, false));
+    }
+
+    @Test
+    public void testValidateUrl() {
+        assertUrl("http://example.com", true);
+        assertUrl("http://example.com:80", true);
+        assertUrl("http://example.com:80/hello", true);
+        assertUrl("http://example.com:80/hello?ya=1", true);
+        assertUrl("https://example.com", true);
+
+        assertUrl("https//example.com", false);
+        assertUrl("example.com", false);
     }
 
 }

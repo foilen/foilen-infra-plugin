@@ -263,6 +263,9 @@ public class DockerContainerOutput {
         for (IPApplicationDefinitionAssetsBundle assetBundles : assetsBundles) {
             String assetsFolderPath = assetBundles.getAssetsFolderPath();
 
+            // Create the directory
+            DirectoryTools.createPath(buildDirectory + assetsFolderPath);
+
             // Text files
             List<Tuple2<String, String>> assetsRelativePathAndTextContent = assetBundles.getAssetsRelativePathAndTextContent();
             for (Tuple2<String, String> assetRelativePathAndContent : assetsRelativePathAndTextContent) {

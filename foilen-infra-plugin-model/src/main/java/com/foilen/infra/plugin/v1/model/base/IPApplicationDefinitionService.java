@@ -20,7 +20,7 @@ public class IPApplicationDefinitionService extends AbstractBasics {
     private String name;
     private String workingDirectory = null;
     private String command;
-    private Integer runAs = null;
+    private Long runAs = null;
 
     public IPApplicationDefinitionService() {
     }
@@ -30,7 +30,7 @@ public class IPApplicationDefinitionService extends AbstractBasics {
         this.command = command;
     }
 
-    public IPApplicationDefinitionService(String name, String command, Integer runAs) {
+    public IPApplicationDefinitionService(String name, String command, Long runAs) {
         this.name = name;
         this.command = command;
         this.runAs = runAs;
@@ -44,7 +44,7 @@ public class IPApplicationDefinitionService extends AbstractBasics {
         return name;
     }
 
-    public Integer getRunAs() {
+    public Long getRunAs() {
         return runAs;
     }
 
@@ -60,7 +60,7 @@ public class IPApplicationDefinitionService extends AbstractBasics {
         this.name = name;
     }
 
-    public void setRunAs(Integer runAs) {
+    public void setRunAs(Long runAs) {
         this.runAs = runAs;
     }
 

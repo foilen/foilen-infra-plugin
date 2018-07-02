@@ -34,14 +34,14 @@ public class IPApplicationDefinition {
     private Map<Integer, String> portsEndpoint = new LinkedHashMap<>();
     private List<IPApplicationDefinitionVolume> volumes = new ArrayList<>();
     private Map<String, String> environments = new LinkedHashMap<>();
-    private Integer runAs = null;
+    private Long runAs = null;
     private String workingDirectory;
     private List<String> entrypoint = null;
     private String command = null;
 
     // Image - Extra features
     private List<IPApplicationDefinitionService> services = new ArrayList<>();
-    private List<Tuple2<String, Integer>> containerUsersToChangeId = new ArrayList<>();
+    private List<Tuple2<String, Long>> containerUsersToChangeId = new ArrayList<>();
     private List<Tuple2<String, String>> assetsPathAndContent = new ArrayList<>();
     private List<IPApplicationDefinitionAssetsBundle> assetsBundles = new ArrayList<>();
     private List<IPApplicationDefinitionPortRedirect> portsRedirect = new ArrayList<>();
@@ -88,7 +88,7 @@ public class IPApplicationDefinition {
         buildSteps.add(new IPApplicationDefinitionBuildStep(IPApplicationDefinitionBuildStepType.COPY, source + " " + destination));
     }
 
-    public void addContainerUserToChangeId(String containerUser, int userId) {
+    public void addContainerUserToChangeId(String containerUser, Long userId) {
         containerUsersToChangeId.add(new Tuple2<>(containerUser, userId));
     }
 
@@ -152,7 +152,7 @@ public class IPApplicationDefinition {
         return command;
     }
 
-    public List<Tuple2<String, Integer>> getContainerUsersToChangeId() {
+    public List<Tuple2<String, Long>> getContainerUsersToChangeId() {
         return containerUsersToChangeId;
     }
 
@@ -196,7 +196,7 @@ public class IPApplicationDefinition {
         return portsRedirect;
     }
 
-    public Integer getRunAs() {
+    public Long getRunAs() {
         return runAs;
     }
 
@@ -232,7 +232,7 @@ public class IPApplicationDefinition {
         this.command = command;
     }
 
-    public void setContainerUsersToChangeId(List<Tuple2<String, Integer>> containerUsersToChangeId) {
+    public void setContainerUsersToChangeId(List<Tuple2<String, Long>> containerUsersToChangeId) {
         this.containerUsersToChangeId = containerUsersToChangeId;
     }
 
@@ -276,7 +276,7 @@ public class IPApplicationDefinition {
         this.portsRedirect = portsRedirect;
     }
 
-    public void setRunAs(Integer runAs) {
+    public void setRunAs(Long runAs) {
         this.runAs = runAs;
     }
 

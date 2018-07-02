@@ -35,15 +35,15 @@ public class DockerContainerOutputTest {
         applicationDefinition.addBuildStepCopy("asset/a.zip", "/tmp/a.zip");
         applicationDefinition.addBuildStepCommand("unzip /tmp/a.zip");
         applicationDefinition.addBuildStepCopy("asset/adir", "/asserts/adir");
-        applicationDefinition.addContainerUserToChangeId("containerUser1", 1000);
-        applicationDefinition.addContainerUserToChangeId("containerUser2", 1000);
+        applicationDefinition.addContainerUserToChangeId("containerUser1", 1000L);
+        applicationDefinition.addContainerUserToChangeId("containerUser2", 1000L);
         applicationDefinition.addVolume(new IPApplicationDefinitionVolume("/tmp/docker/config", "/volumes/config", null, null, null));
         applicationDefinition.addVolume(new IPApplicationDefinitionVolume("/tmp/docker/etc", "/volumes/etc", null, null, null));
         applicationDefinition.addPortExposed(80, 8080);
         applicationDefinition.addPortExposed(443, 8443);
         applicationDefinition.addPortRedirect(3306, "d001.node.example.com", "mysql01.db.example.com", DockerContainerEndpoints.MYSQL_TCP);
         applicationDefinition.addPortEndpoint(8080, "HTTP");
-        applicationDefinition.setRunAs(10001);
+        applicationDefinition.setRunAs(10001L);
         applicationDefinition.setCommand("/usr/sbin/haproxy -f /volumes/config/haproxy");
 
         ctx = new DockerContainerOutputContext("Uroot_Stest", "Uroot_Stest", "Uroot_Stest");

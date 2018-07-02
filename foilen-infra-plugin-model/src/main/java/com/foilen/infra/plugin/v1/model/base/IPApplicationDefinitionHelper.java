@@ -37,7 +37,7 @@ public final class IPApplicationDefinitionHelper {
      * @param containerUserName
      *            the container user name that will have the host's user id
      */
-    public static void createAndRunAsUser(IPApplicationDefinition applicationDefinition, int hostUserId, String containerUserName) {
+    public static void createAndRunAsUser(IPApplicationDefinition applicationDefinition, long hostUserId, String containerUserName) {
         applicationDefinition.addBuildStepCommand("useradd -u " + hostUserId + " " + containerUserName);
         applicationDefinition.setRunAs(hostUserId);
     }

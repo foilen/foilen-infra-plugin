@@ -88,10 +88,10 @@ public class DockerContainerOutput {
             if (!portsRedirect.isEmpty()) {
 
                 // Change the container to run as root, the haproxy as root and all the other services as the container user
-                Integer runAs = transformedApplicationDefinition.getRunAs();
+                Long runAs = transformedApplicationDefinition.getRunAs();
                 if (runAs != null && runAs != 0) {
                     logger.info("[{}] Changing the instance user to root and all the services to {}", imageName, runAs);
-                    transformedApplicationDefinition.setRunAs(0);
+                    transformedApplicationDefinition.setRunAs(0L);
                     for (IPApplicationDefinitionService service : transformedApplicationDefinition.getServices()) {
                         if (service.getRunAs() == null) {
                             service.setRunAs(runAs);
@@ -317,7 +317,7 @@ public class DockerContainerOutput {
 
         // Fix permissions
         content.append("\n");
-        for (Tuple2<String, Integer> containerUserAndId : applicationDefinition.getContainerUsersToChangeId()) {
+        for (Tuple2<String, Long> containerUserAndId : applicationDefinition.getContainerUsersToChangeId()) {
             content.append("RUN /_infra/fixUserPermissions.sh");
             content.append(" ").append(containerUserAndId.getA());
             content.append(" ").append(containerUserAndId.getA());

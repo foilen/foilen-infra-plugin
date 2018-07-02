@@ -20,8 +20,8 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
     private String hostFolder;
     private String containerFsFolder;
 
-    private Integer ownerId;
-    private Integer groupId;
+    private Long ownerId;
+    private Long groupId;
 
     private String permissions;
 
@@ -66,7 +66,7 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
      * @param permissions
      *            the permissions
      */
-    public IPApplicationDefinitionVolume(String hostFolder, String containerFsFolder, Integer ownerId, Integer groupId, String permissions) {
+    public IPApplicationDefinitionVolume(String hostFolder, String containerFsFolder, Long ownerId, Long groupId, String permissions) {
         this.hostFolder = hostFolder;
         this.containerFsFolder = containerFsFolder;
         this.ownerId = ownerId;
@@ -78,7 +78,7 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         return containerFsFolder;
     }
 
-    public Integer getGroupId() {
+    public Long getGroupId() {
         return groupId;
     }
 
@@ -86,7 +86,7 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         return hostFolder;
     }
 
-    public Integer getOwnerId() {
+    public Long getOwnerId() {
         return ownerId;
     }
 
@@ -98,7 +98,7 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         this.containerFsFolder = containerFsFolder;
     }
 
-    public void setGroupId(Integer groupId) {
+    public void setGroupId(Long groupId) {
         this.groupId = groupId;
     }
 
@@ -106,7 +106,7 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         this.hostFolder = hostFolder;
     }
 
-    public void setOwnerId(Integer ownerId) {
+    public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
 

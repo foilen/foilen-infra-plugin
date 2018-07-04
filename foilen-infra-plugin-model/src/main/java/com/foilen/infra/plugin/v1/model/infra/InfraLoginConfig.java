@@ -33,6 +33,10 @@ public class InfraLoginConfig {
 
     private String fromEmail;
     private String administratorEmail;
+    private String mailHost;
+    private int mailPort = 25;
+    private String mailUsername;
+    private String mailPassword;
 
     private String loginBaseUrl;
 
@@ -70,6 +74,22 @@ public class InfraLoginConfig {
 
     public String getLoginBaseUrl() {
         return loginBaseUrl;
+    }
+
+    public String getMailHost() {
+        return mailHost;
+    }
+
+    public String getMailPassword() {
+        return mailPassword;
+    }
+
+    public int getMailPort() {
+        return mailPort;
+    }
+
+    public String getMailUsername() {
+        return mailUsername;
     }
 
     public String getMysqlDatabaseName() {
@@ -126,6 +146,22 @@ public class InfraLoginConfig {
 
     public void setLoginBaseUrl(String loginBaseUrl) {
         this.loginBaseUrl = loginBaseUrl;
+    }
+
+    public void setMailHost(String mailHost) {
+        this.mailHost = mailHost;
+    }
+
+    public void setMailPassword(String mailPassword) {
+        this.mailPassword = mailPassword;
+    }
+
+    public void setMailPort(int mailPort) {
+        this.mailPort = mailPort;
+    }
+
+    public void setMailUsername(String mailUsername) {
+        this.mailUsername = mailUsername;
     }
 
     public void setMysqlDatabaseName(String mysqlDatabaseName) {

@@ -424,6 +424,14 @@ public class DockerContainerOutput {
             arguments.add(hostToIp.getA() + ":" + hostToIp.getB());
         }
 
+        // Log
+        if (ctx.getDockerLogsMaxSizeMB() != null) {
+            arguments.add("--log-driver");
+            arguments.add("json-file");
+            arguments.add("--log-opt");
+            arguments.add("max-size=" + ctx.getDockerLogsMaxSizeMB() + "m");
+        }
+
         // Add user
         if (applicationDefinition.getRunAs() != null) {
             arguments.add("-u");
@@ -486,6 +494,14 @@ public class DockerContainerOutput {
             arguments.add(hostToIp.getA() + ":" + hostToIp.getB());
         }
 
+        // Log
+        if (ctx.getDockerLogsMaxSizeMB() != null) {
+            arguments.add("--log-driver");
+            arguments.add("json-file");
+            arguments.add("--log-opt");
+            arguments.add("max-size=" + ctx.getDockerLogsMaxSizeMB() + "m");
+        }
+
         // Add user
         if (applicationDefinition.getRunAs() != null) {
             arguments.add("-u");
@@ -545,6 +561,14 @@ public class DockerContainerOutput {
         for (Tuple2<String, String> hostToIp : applicationDefinition.getHostToIpMapping()) {
             arguments.add("--add-host");
             arguments.add(hostToIp.getA() + ":" + hostToIp.getB());
+        }
+
+        // Log
+        if (ctx.getDockerLogsMaxSizeMB() != null) {
+            arguments.add("--log-driver");
+            arguments.add("json-file");
+            arguments.add("--log-opt");
+            arguments.add("max-size=" + ctx.getDockerLogsMaxSizeMB() + "m");
         }
 
         // Add user

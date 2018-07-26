@@ -20,6 +20,9 @@ public class DockerContainerOutputContext {
 
     private String buildDirectory;
 
+    // Log details
+    private Integer dockerLogsMaxSizeMB;
+
     // Redirection details
     private Map<String, Integer> redirectPortByMachineContainerEndpoint = new HashMap<>();
     private Map<String, String> redirectIpByMachineContainerEndpoint = new HashMap<>();
@@ -50,6 +53,10 @@ public class DockerContainerOutputContext {
         return containerName;
     }
 
+    public Integer getDockerLogsMaxSizeMB() {
+        return dockerLogsMaxSizeMB;
+    }
+
     public String getHostName() {
         return hostName;
     }
@@ -74,6 +81,10 @@ public class DockerContainerOutputContext {
     public DockerContainerOutputContext setContainerName(String containerName) {
         this.containerName = containerName;
         return this;
+    }
+
+    public void setDockerLogsMaxSizeMB(Integer dockerLogsMaxSizeMB) {
+        this.dockerLogsMaxSizeMB = dockerLogsMaxSizeMB;
     }
 
     public DockerContainerOutputContext setHostName(String hostName) {

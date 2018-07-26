@@ -109,6 +109,14 @@ public class DockerContainerOutputTest {
     }
 
     @Test
+    public void testToRunCommandWithRestart_log() {
+        ctx.setDockerLogsMaxSizeMB(100);
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 --log-driver json-file --log-opt max-size=100m -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testToRunCommandWithRestart_NoInfra() {
 
         applicationDefinition.getPortsRedirect().clear();

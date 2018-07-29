@@ -107,7 +107,7 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
                 desiredManagedResourceIds.add(desiredManagedResource.getInternalId());
             }
 
-            // Links
+            // Links To
             for (String linkType : finalStateManagedResource.getManagedLinksToTypes()) {
                 List<? extends IPResource> previousLinks;
                 if (desiredManagedResource.getInternalId() == null) {
@@ -119,8 +119,8 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
                         .filter(it -> linkType.equals(it.getA())) //
                         .map(it -> it.getB()) //
                         .collect(Collectors.toList());
-                logger.debug("Previous links of type {} : {}", linkType, previousLinks.size());
-                logger.debug("Desired links of type {} : {}", linkType, desiredLinks.size());
+                logger.debug("Previous links to of type {} : {}", linkType, previousLinks.size());
+                logger.debug("Desired links to of type {} : {}", linkType, desiredLinks.size());
 
                 // Remove those in previousLinks, but not in desiredLinks
                 previousLinks.stream() //
@@ -136,6 +136,38 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
                         .forEach(desired -> {
                             logger.debug("Adding link {}/{}/{}", desiredManagedResource, linkType, desired);
                             changes.linkAdd(desiredManagedResource, linkType, desired);
+                        });
+            }
+
+            // Links From
+            for (String linkType : finalStateManagedResource.getManagedLinksFromTypes()) {
+                List<? extends IPResource> previousLinks;
+                if (desiredManagedResource.getInternalId() == null) {
+                    previousLinks = Collections.emptyList();
+                } else {
+                    previousLinks = resourceService.linkFindAllByLinkTypeAndToResource(linkType, desiredManagedResource);
+                }
+                List<? extends IPResource> desiredLinks = finalStateManagedResource.getLinksFrom().stream() //
+                        .filter(it -> linkType.equals(it.getB())) //
+                        .map(it -> it.getA()) //
+                        .collect(Collectors.toList());
+                logger.debug("Previous links from of type {} : {}", linkType, previousLinks.size());
+                logger.debug("Desired links from of type {} : {}", linkType, desiredLinks.size());
+
+                // Remove those in previousLinks, but not in desiredLinks
+                previousLinks.stream() //
+                        .filter(previous -> !desiredLinks.stream().anyMatch(desired -> resourceService.resourceEqualsPk(previous, desired))) //
+                        .forEach(previous -> {
+                            logger.debug("Removing link {}/{}/{}", previous, linkType, desiredManagedResource);
+                            changes.linkDelete(previous, linkType, desiredManagedResource);
+                        });
+
+                // Add those in desiredLinks, but not in previousLinks
+                desiredLinks.stream() //
+                        .filter(desired -> !previousLinks.stream().anyMatch(previous -> resourceService.resourceEqualsPk(previous, desired))) //
+                        .forEach(desired -> {
+                            logger.debug("Adding link {}/{}/{}", desired, linkType, desiredManagedResource);
+                            changes.linkAdd(desired, linkType, desiredManagedResource);
                         });
             }
 

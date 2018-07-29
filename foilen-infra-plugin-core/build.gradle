@@ -6,6 +6,9 @@ dependencies {
   compile "com.madgag.spongycastle:prov:$spongycastleVersion"
   compile "commons-codec:commons-codec"
   compile "commons-validator:commons-validator:$commonsValidatorVersion"
+  compile "org.bouncycastle:bcpg-jdk15on:$bouncycastleVersion"
+  compile "org.bouncycastle:bcpkix-jdk15on:$bouncycastleVersion"
+  compile "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
   compile "org.slf4j:slf4j-api"
   compile "org.springframework:spring-beans"
 

@@ -1,5 +1,8 @@
 account default
 host 192.168.0.1
 port 547
+auth on
 user myUser
 password myPass
+tls on
+tls_certcheck off

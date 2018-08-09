@@ -16,6 +16,8 @@ public class MsmtpConfig {
     private String username;
     private String password;
 
+    private boolean tls;
+
     public MsmtpConfig() {
     }
 
@@ -40,6 +42,10 @@ public class MsmtpConfig {
         return username;
     }
 
+    public boolean isTls() {
+        return tls;
+    }
+
     public MsmtpConfig setHostname(String hostname) {
         this.hostname = hostname;
         return this;
@@ -52,6 +58,11 @@ public class MsmtpConfig {
 
     public MsmtpConfig setPort(int port) {
         this.port = port;
+        return this;
+    }
+
+    public MsmtpConfig setTls(boolean tls) {
+        this.tls = tls;
         return this;
     }
 

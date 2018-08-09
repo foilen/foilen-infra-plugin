@@ -21,6 +21,7 @@ public class MsmtpConfigOutputTest {
     public void testToConfig_FullAccount() {
         String expected = ResourceTools.getResourceAsString("MsmtpConfigOutputTest-testToConfig_FullAccount-expected.txt", getClass());
         String actual = MsmtpConfigOutput.toConfig(new MsmtpConfig("192.168.0.1", 547) //
+                .setTls(true) //
                 .setUsername("myUser").setPassword("myPass"));
 
         AssertTools.assertIgnoreLineFeed(expected, actual);

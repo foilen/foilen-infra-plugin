@@ -129,12 +129,12 @@ public abstract class AbstractUpdateEventHandler<R extends IPResource> extends A
             List<? extends IPResource> managers = resourceService.linkFindAllByLinkTypeAndToResource(LinkTypeConstants.MANAGES, createdOrFoundNeededManagedResource);
             if (managers.size() > 1) {
                 throw new IllegalUpdateException("The resource " + createdOrFoundNeededManagedResource.getResourceName() + " of type " + createdOrFoundNeededManagedResource.getClass()
-                        + " is already managed by another resouce");
+                        + " is already managed by another resource");
             }
             if (managers.size() == 1) {
                 if (resource.getInternalId() == null || managers.get(0).getInternalId() != resource.getInternalId()) {
                     throw new IllegalUpdateException("The resource " + createdOrFoundNeededManagedResource.getResourceName() + " of type " + createdOrFoundNeededManagedResource.getClass()
-                            + " is already managed by another resouce");
+                            + " is already managed by another resource");
                 }
             }
         }

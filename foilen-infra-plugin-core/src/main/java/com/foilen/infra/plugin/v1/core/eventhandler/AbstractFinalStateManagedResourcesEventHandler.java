@@ -84,12 +84,12 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
             List<? extends IPResource> managers = resourceService.linkFindAllByLinkTypeAndToResource(LinkTypeConstants.MANAGES, desiredManagedResource);
             if (managers.size() > 1) {
                 throw new IllegalUpdateException(
-                        "The resource " + desiredManagedResource.getResourceName() + " of type " + desiredManagedResource.getClass() + " is already managed by another resouce");
+                        "The resource " + desiredManagedResource.getResourceName() + " of type " + desiredManagedResource.getClass() + " is already managed by another resource");
             }
             if (managers.size() == 1) {
                 if (resource.getInternalId() == null || managers.get(0).getInternalId() != resource.getInternalId()) {
                     throw new IllegalUpdateException(
-                            "The resource " + desiredManagedResource.getResourceName() + " of type " + desiredManagedResource.getClass() + " is already managed by another resouce");
+                            "The resource " + desiredManagedResource.getResourceName() + " of type " + desiredManagedResource.getClass() + " is already managed by another resource");
                 }
             }
         }

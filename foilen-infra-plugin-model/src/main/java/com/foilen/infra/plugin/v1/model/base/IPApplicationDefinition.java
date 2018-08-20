@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.foilen.infra.plugin.v1.model.docker.DockerContainerEndpoints;
 import com.foilen.smalltools.hash.HashSha256;
+import com.foilen.smalltools.tools.JsonTools;
 import com.foilen.smalltools.tools.ResourceTools;
 import com.foilen.smalltools.tuple.Tuple2;
+import com.google.common.base.Joiner;
 
 @JsonPropertyOrder(alphabetic = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -216,6 +219,12 @@ public class IPApplicationDefinition {
         return workingDirectory;
     }
 
+    private <K extends Comparable<K>> String mapToString(Map<K, ?> map) {
+        return Joiner.on(", ").join(map.entrySet().stream() //
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey())) //
+                .collect(Collectors.toList()));
+    }
+
     public void setAssetsBundles(List<IPApplicationDefinitionAssetsBundle> assetsBundles) {
         this.assetsBundles = assetsBundles;
     }
@@ -325,23 +334,25 @@ public class IPApplicationDefinition {
      * @return the unique id
      */
     public String toImageUniqueId() {
+
         StringBuilder concat = new StringBuilder();
         concat.append(from);
-        concat.append(buildSteps);
-        concat.append(portsExposed);
-        concat.append(udpPortsExposed);
-        concat.append(portsEndpoint);
-        concat.append(volumes);
-        concat.append(environments);
+        concat.append(JsonTools.compactPrintWithoutNulls(buildSteps));
+        concat.append(mapToString(portsExposed));
+        concat.append(mapToString(udpPortsExposed));
+        concat.append(mapToString(portsEndpoint));
+        concat.append(JsonTools.compactPrintWithoutNulls(volumes));
+        concat.append(mapToString(environments));
         concat.append(runAs);
         concat.append(workingDirectory);
         concat.append(entrypoint);
         concat.append(command);
-        concat.append(services);
+        concat.append(JsonTools.compactPrintWithoutNulls(services));
         concat.append(containerUsersToChangeId);
         concat.append(assetsPathAndContent);
-        concat.append(assetsBundles);
-        concat.append(portsRedirect);
+        concat.append(JsonTools.compactPrintWithoutNulls(assetsBundles));
+        concat.append(JsonTools.compactPrintWithoutNulls(portsRedirect));
+
         return HashSha256.hashString(concat.toString());
     }
 

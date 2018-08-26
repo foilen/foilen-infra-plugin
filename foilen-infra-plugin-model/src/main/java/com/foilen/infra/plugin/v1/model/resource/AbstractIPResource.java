@@ -9,6 +9,9 @@
  */
 package com.foilen.infra.plugin.v1.model.resource;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,6 +28,7 @@ public abstract class AbstractIPResource implements IPResource {
 
     private Long internalId;
     private String resourceEditorName;
+    private SortedMap<String, String> meta = new TreeMap<>();
 
     @Override
     public IPResource deepClone() {
@@ -45,6 +49,11 @@ public abstract class AbstractIPResource implements IPResource {
     }
 
     @Override
+    public SortedMap<String, String> getMeta() {
+        return meta;
+    }
+
+    @Override
     public String getResourceEditorName() {
         return resourceEditorName;
     }
@@ -57,6 +66,11 @@ public abstract class AbstractIPResource implements IPResource {
     @Override
     public void setInternalId(Long internalId) {
         this.internalId = internalId;
+    }
+
+    @Override
+    public void setMeta(SortedMap<String, String> meta) {
+        this.meta = meta;
     }
 
     @Override

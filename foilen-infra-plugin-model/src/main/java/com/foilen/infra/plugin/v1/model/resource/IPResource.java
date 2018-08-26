@@ -9,6 +9,8 @@
  */
 package com.foilen.infra.plugin.v1.model.resource;
 
+import java.util.SortedMap;
+
 /**
  * A resource manageable by the plugin system. Better to extend {@link AbstractIPResource}.
  *
@@ -24,6 +26,13 @@ public interface IPResource {
      * @return the id
      */
     Long getInternalId();
+
+    /**
+     * Some meta information.
+     *
+     * @return some meta information
+     */
+    SortedMap<String, String> getMeta();
 
     InfraPluginResourceCategory getResourceCategory();
 
@@ -55,6 +64,14 @@ public interface IPResource {
      *            the id
      */
     void setInternalId(Long internalId);
+
+    /**
+     * Some meta information.
+     *
+     * @param meta
+     *            some meta information
+     */
+    void setMeta(SortedMap<String, String> meta);
 
     /**
      * The name of the editor for that resource.

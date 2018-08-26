@@ -9,12 +9,18 @@
  */
 package com.foilen.infra.plugin.v1.core.exception;
 
+import com.foilen.infra.plugin.v1.model.resource.IPResource;
+
 public class ResourcePrimaryKeyCollisionException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
     public ResourcePrimaryKeyCollisionException() {
         super("A resource with the same primary key already exists");
+    }
+
+    public ResourcePrimaryKeyCollisionException(IPResource resource) {
+        super("A resource with the same primary key already exists : " + resource);
     }
 
 }

@@ -19,15 +19,17 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
 
     private int entryRawPort;
     private String remoteBridgeHost;
+    private int remoteBridgePort;
     private String remoteServiceName;
     private String remoteServiceEndpoint;
 
     public RedirectPortRegistryEntry() {
     }
 
-    public RedirectPortRegistryEntry(int entryRawPort, String remoteBridgeHost, String remoteServiceName, String remoteServiceEndpoint) {
+    public RedirectPortRegistryEntry(int entryRawPort, String remoteBridgeHost, int remoteBridgePort, String remoteServiceName, String remoteServiceEndpoint) {
         this.entryRawPort = entryRawPort;
         this.remoteBridgeHost = remoteBridgeHost;
+        this.remoteBridgePort = remoteBridgePort;
         this.remoteServiceName = remoteServiceName;
         this.remoteServiceEndpoint = remoteServiceEndpoint;
     }
@@ -37,6 +39,7 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
         ComparisonChain cc = ComparisonChain.start();
         cc = cc.compare(entryRawPort, o.entryRawPort);
         cc = cc.compare(remoteBridgeHost, o.remoteBridgeHost);
+        cc = cc.compare(remoteBridgePort, o.remoteBridgePort);
         cc = cc.compare(remoteServiceName, o.remoteServiceName);
         cc = cc.compare(remoteServiceEndpoint, o.remoteServiceEndpoint);
         return cc.result();
@@ -64,6 +67,9 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
         } else if (!remoteBridgeHost.equals(other.remoteBridgeHost)) {
             return false;
         }
+        if (remoteBridgePort != other.remoteBridgePort) {
+            return false;
+        }
         if (remoteServiceEndpoint == null) {
             if (other.remoteServiceEndpoint != null) {
                 return false;
@@ -89,6 +95,10 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
         return remoteBridgeHost;
     }
 
+    public int getRemoteBridgePort() {
+        return remoteBridgePort;
+    }
+
     public String getRemoteServiceEndpoint() {
         return remoteServiceEndpoint;
     }
@@ -103,6 +113,7 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
         int result = 1;
         result = prime * result + entryRawPort;
         result = prime * result + ((remoteBridgeHost == null) ? 0 : remoteBridgeHost.hashCode());
+        result = prime * result + remoteBridgePort;
         result = prime * result + ((remoteServiceEndpoint == null) ? 0 : remoteServiceEndpoint.hashCode());
         result = prime * result + ((remoteServiceName == null) ? 0 : remoteServiceName.hashCode());
         return result;
@@ -114,6 +125,10 @@ public class RedirectPortRegistryEntry implements Comparable<RedirectPortRegistr
 
     public void setRemoteBridgeHost(String remoteBridgeHost) {
         this.remoteBridgeHost = remoteBridgeHost;
+    }
+
+    public void setRemoteBridgePort(int remoteBridgePort) {
+        this.remoteBridgePort = remoteBridgePort;
     }
 
     public void setRemoteServiceEndpoint(String remoteServiceEndpoint) {

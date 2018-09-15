@@ -329,7 +329,7 @@ public abstract class AbstractUpdateEventHandler<R extends IPResource> extends A
         boolean different = !currentJson.equals(desiredJson);
 
         if (different) {
-            logger.debug("Need to update resource {} to {}", current, desired);
+            logger.debug("Need to update resource {} to {}", currentJson, desiredJson);
             ReflectionTools.copyAllProperties(desired.deepClone(), current);
         }
 

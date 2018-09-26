@@ -102,6 +102,7 @@ public class DockerContainerOutput {
                 HaProxyConfig haProxyConfig = new HaProxyConfig();
                 haProxyConfig.setUser(null);
                 haProxyConfig.setGroup(null);
+                haProxyConfig.setTimeoutTunnelMs(10L * 60L * 1000L); // 10 minutes
                 boolean missingDependency = false;
                 for (IPApplicationDefinitionPortRedirect portRedirect : portsRedirect) {
                     String machineContainerEndpoint = portRedirect.getMachineContainerEndpoint();

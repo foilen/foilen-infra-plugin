@@ -25,8 +25,9 @@ public class HaProxyConfig {
     private String group = "haproxy";
 
     private long timeoutConnectionMs = 5000L;
-    private long timeoutClientMs = 50000L;
-    private long timeoutServerMs = 50000L;
+    private long timeoutClientMs = 60000L;
+    private long timeoutServerMs = 60000L;
+    private long timeoutTunnelMs = 60000L;
 
     private String pidfile = null;
 
@@ -109,6 +110,10 @@ public class HaProxyConfig {
         return timeoutServerMs;
     }
 
+    public long getTimeoutTunnelMs() {
+        return timeoutTunnelMs;
+    }
+
     public String getUser() {
         return user;
     }
@@ -147,6 +152,10 @@ public class HaProxyConfig {
 
     public void setTimeoutServerMs(long timeoutServerMs) {
         this.timeoutServerMs = timeoutServerMs;
+    }
+
+    public void setTimeoutTunnelMs(long timeoutTunnelMs) {
+        this.timeoutTunnelMs = timeoutTunnelMs;
     }
 
     public void setUser(String user) {

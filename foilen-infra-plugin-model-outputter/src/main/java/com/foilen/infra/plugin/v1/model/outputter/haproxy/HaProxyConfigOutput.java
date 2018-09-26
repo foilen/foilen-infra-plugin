@@ -88,6 +88,7 @@ public class HaProxyConfigOutput {
         content.append("  timeout connect ").append(haProxyConfig.getTimeoutConnectionMs()).append("\n");
         content.append("  timeout client ").append(haProxyConfig.getTimeoutClientMs()).append("\n");
         content.append("  timeout server ").append(haProxyConfig.getTimeoutServerMs()).append("\n");
+        content.append("  timeout tunnel ").append(haProxyConfig.getTimeoutTunnelMs()).append("\n");
         content.append("\n");
 
         for (Entry<Integer, HaProxyConfigPort> configPerPort : haProxyConfig.getPorts().entrySet()) {

@@ -105,6 +105,15 @@ public interface IPResourceService {
     /**
      * Find all the "to" resources.
      *
+     * @param fromResourceId
+     *            the "from" resource id
+     * @return all the linkType -&gt; "to" resources
+     */
+    List<Tuple2<String, ? extends IPResource>> linkFindAllByFromResource(long fromResourceId);
+
+    /**
+     * Find all the "to" resources.
+     *
      * @param fromResource
      *            the "from" resource
      * @param linkType
@@ -162,6 +171,15 @@ public interface IPResourceService {
      * @return all the "from" resources
      */
     List<Tuple2<? extends IPResource, String>> linkFindAllByToResource(IPResource toResource);
+
+    /**
+     * Find all the "from" resources.
+     *
+     * @param toResourceId
+     *            the "to" resource id
+     * @return all the "from" resources
+     */
+    List<Tuple2<? extends IPResource, String>> linkFindAllByToResource(long toResourceId);
 
     /**
      * Find the links that are "from" or "to" the resource.

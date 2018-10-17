@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import com.foilen.infra.plugin.v1.core.context.ChangesContext;
 import com.foilen.infra.plugin.v1.core.context.CommonServicesContext;
 import com.foilen.infra.plugin.v1.core.exception.IllegalUpdateException;
+import com.foilen.infra.plugin.v1.core.exception.NoChangeNeededException;
 import com.foilen.infra.plugin.v1.core.service.IPResourceService;
 import com.foilen.infra.plugin.v1.model.resource.IPResource;
 import com.foilen.infra.plugin.v1.model.resource.LinkTypeConstants;
@@ -45,8 +46,14 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
     }
 
     private void commonHandler(CommonServicesContext services, ChangesContext changes, FinalStateManagedResourcesUpdateEventHandlerContext<R> context) {
-        // Get information
-        commonHandlerExecute(services, context);
+
+        try {
+            // Get information
+            commonHandlerExecute(services, context);
+        } catch (NoChangeNeededException e) {
+            logger.info("No Change Needed. Skip");
+            return;
+        }
 
         // Update the updated resource if needed
         if (context.isRequestUpdateResource()) {
@@ -193,8 +200,10 @@ public abstract class AbstractFinalStateManagedResourcesEventHandler<R extends I
      *            the services you can use
      * @param context
      *            the context of the current update
+     * @throws NoChangeNeededException
+     *             if nothing needs to be done, throw that exception
      */
-    protected abstract void commonHandlerExecute(CommonServicesContext services, FinalStateManagedResourcesUpdateEventHandlerContext<R> context);
+    protected abstract void commonHandlerExecute(CommonServicesContext services, FinalStateManagedResourcesUpdateEventHandlerContext<R> context) throws NoChangeNeededException;
 
     @Override
     public void deleteHandler(CommonServicesContext services, ChangesContext changes, R resource, List<Tuple3<IPResource, String, IPResource>> previousLinks) {

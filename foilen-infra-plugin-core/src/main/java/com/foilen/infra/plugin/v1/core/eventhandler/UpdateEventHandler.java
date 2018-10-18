@@ -34,7 +34,7 @@ public interface UpdateEventHandler<R extends IPResource> {
     void addHandler(CommonServicesContext services, ChangesContext changes, R resource);
 
     /**
-     * Triggered when a resource might need to change its linked resources due to an update.
+     * Triggered when maybe an update would be required (e.g after upgrading a plugin).
      *
      * @param services
      *            the services you can use
@@ -44,6 +44,34 @@ public interface UpdateEventHandler<R extends IPResource> {
      *            the resource to check and update
      */
     void checkAndFix(CommonServicesContext services, ChangesContext changes, R resource);
+
+    /**
+     * Triggered when another resource directly linked to this one was updated.
+     *
+     * @param services
+     *            the services you can use
+     * @param changes
+     *            any changes you want to do
+     * @param resource
+     *            the resource to check and update
+     */
+    default void checkDirectLinkChanged(CommonServicesContext services, ChangesContext changes, R resource) {
+        checkAndFix(services, changes, resource);
+    }
+
+    /**
+     * Triggered when another resource that is not directly linked to this one, but that is still linked by more depth, was updated.
+     *
+     * @param services
+     *            the services you can use
+     * @param changes
+     *            any changes you want to do
+     * @param resource
+     *            the resource to check and update
+     */
+    default void checkFarLinkChanged(CommonServicesContext services, ChangesContext changes, R resource) {
+        checkAndFix(services, changes, resource);
+    }
 
     /**
      * Triggered when a resource is deleted.

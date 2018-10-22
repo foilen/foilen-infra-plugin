@@ -10,6 +10,7 @@
 package com.foilen.infra.plugin.v1.model.outputter.docker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -378,12 +379,6 @@ public class DockerContainerOutput {
             content.append(JsonTools.compactPrint(applicationDefinition.getEntrypoint())).append("\n");
         }
 
-        // Command
-        if (applicationDefinition.getCommand() != null) {
-            content.append("CMD ");
-            content.append(applicationDefinition.getCommand()).append("\n");
-        }
-
         return content.toString();
     }
 
@@ -451,6 +446,11 @@ public class DockerContainerOutput {
         }
 
         arguments.add(ctx.getImageName());
+
+        // Command
+        if (applicationDefinition.getCommand() != null) {
+            arguments.addAll(Arrays.asList(applicationDefinition.getCommand().split(" ")));
+        }
 
         return arguments.toArray(new String[arguments.size()]);
     }
@@ -522,6 +522,11 @@ public class DockerContainerOutput {
 
         arguments.add(ctx.getImageName());
 
+        // Command
+        if (applicationDefinition.getCommand() != null) {
+            arguments.addAll(Arrays.asList(applicationDefinition.getCommand().split(" ")));
+        }
+
         return arguments.toArray(new String[arguments.size()]);
     }
 
@@ -590,6 +595,11 @@ public class DockerContainerOutput {
         }
 
         arguments.add(ctx.getImageName());
+
+        // Command
+        if (applicationDefinition.getCommand() != null) {
+            arguments.addAll(Arrays.asList(applicationDefinition.getCommand().split(" ")));
+        }
 
         return arguments.toArray(new String[arguments.size()]);
     }

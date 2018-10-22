@@ -14,4 +14,3 @@ VOLUME ["/volumes/config","/volumes/etc"]
 
 USER 10001
 
-CMD /usr/sbin/haproxy -f /volumes/config/haproxy

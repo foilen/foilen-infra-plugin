@@ -86,7 +86,7 @@ public class DockerContainerOutputTest {
 
     @Test
     public void testToRunArgumentsSinglePassAttached() {
-        String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsSinglePassAttached(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
@@ -96,14 +96,14 @@ public class DockerContainerOutputTest {
 
         applicationDefinition.addVolume(new IPApplicationDefinitionVolume(null, "/volumes/internal", null, null, null));
 
-        String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsSinglePassAttached(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void testToRunCommandWithRestart() {
-        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
@@ -111,7 +111,7 @@ public class DockerContainerOutputTest {
     @Test
     public void testToRunCommandWithRestart_log() {
         ctx.setDockerLogsMaxSizeMB(100);
-        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 --log-driver json-file --log-opt max-size=100m -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 --log-driver json-file --log-opt max-size=100m -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
@@ -121,7 +121,7 @@ public class DockerContainerOutputTest {
 
         applicationDefinition.getPortsRedirect().clear();
 
-        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
@@ -131,14 +131,14 @@ public class DockerContainerOutputTest {
 
         applicationDefinition.addVolume(new IPApplicationDefinitionVolume(null, "/volumes/internal", null, null, null));
 
-        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void testToRunCommandWithRestartAndIp() {
-        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest";
+        String expected = "run --detach --restart always --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsWithRestart(applicationDefinition, ctx));
         Assert.assertEquals(expected, actual);
     }

@@ -13,7 +13,7 @@ FIX_CONTAINER_GROUP_ID=$(id -g $GROUP_NAME)
 usermod -u $NEW_USER_ID $USER_NAME -o
 groupmod -g $NEW_GROUP_ID $GROUP_NAME -o
 
-for rootDir in $(ls); do
+for rootDir in $(ls /); do
 	if [ "$rootDir" == "boot" ]; then
 		continue
 	fi

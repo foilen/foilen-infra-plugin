@@ -397,7 +397,11 @@ public class DockerContainerOutput {
                 continue;
             }
             arguments.add("--volume");
-            arguments.add(sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder())));
+            String volumeLine = sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder()));
+            if (volume.isReadOnly()) {
+                volumeLine += ":ro";
+            }
+            arguments.add(volumeLine);
         }
 
         // Exposed ports
@@ -472,7 +476,11 @@ public class DockerContainerOutput {
                 continue;
             }
             arguments.add("--volume");
-            arguments.add(sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder())));
+            String volumeLine = sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder()));
+            if (volume.isReadOnly()) {
+                volumeLine += ":ro";
+            }
+            arguments.add(volumeLine);
         }
 
         // Exposed ports
@@ -546,7 +554,11 @@ public class DockerContainerOutput {
                 continue;
             }
             arguments.add("--volume");
-            arguments.add(sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder())));
+            String volumeLine = sanitize(volume.getHostFolder() + ":" + sanitize(volume.getContainerFsFolder()));
+            if (volume.isReadOnly()) {
+                volumeLine += ":ro";
+            }
+            arguments.add(volumeLine);
         }
 
         // Exposed ports

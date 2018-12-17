@@ -25,6 +25,8 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
 
     private String permissions;
 
+    private boolean readOnly;
+
     public IPApplicationDefinitionVolume() {
     }
 
@@ -74,6 +76,31 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         this.permissions = permissions;
     }
 
+    /**
+     * A volume where the host's file or folder will have its owner/group/permissions changed.
+     *
+     * @param hostFolder
+     *            the path on the host
+     * @param containerFsFolder
+     *            the path inside the container
+     * @param ownerId
+     *            the owner
+     * @param groupId
+     *            the group
+     * @param permissions
+     *            the permissions
+     * @param readOnly
+     *            if the volume should be mounted as read-only
+     */
+    public IPApplicationDefinitionVolume(String hostFolder, String containerFsFolder, Long ownerId, Long groupId, String permissions, boolean readOnly) {
+        this.hostFolder = hostFolder;
+        this.containerFsFolder = containerFsFolder;
+        this.ownerId = ownerId;
+        this.groupId = groupId;
+        this.permissions = permissions;
+        this.readOnly = readOnly;
+    }
+
     public String getContainerFsFolder() {
         return containerFsFolder;
     }
@@ -94,6 +121,10 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         return permissions;
     }
 
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
     public void setContainerFsFolder(String containerFsFolder) {
         this.containerFsFolder = containerFsFolder;
     }
@@ -112,6 +143,10 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
 }

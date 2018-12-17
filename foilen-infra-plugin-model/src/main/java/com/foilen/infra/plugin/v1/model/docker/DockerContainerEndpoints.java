@@ -16,12 +16,16 @@ import java.util.List;
 public class DockerContainerEndpoints {
 
     public static final String HTTP_TCP = "HTTP_TCP";
+    public static final String MONGODB_TCP = "MONGODB_TCP";
     public static final String MYSQL_TCP = "MYSQL_TCP";
+    public static final String POSTGRESQL_TCP = "POSTGRESQL_TCP";
     public static final String SMTP_TCP = "SMTP_TCP";
 
     public static final List<String> allValues = Collections.unmodifiableList(Arrays.asList( //
             HTTP_TCP, //
+            MONGODB_TCP, //
             MYSQL_TCP, //
+            POSTGRESQL_TCP, //
             SMTP_TCP //
     ));
 

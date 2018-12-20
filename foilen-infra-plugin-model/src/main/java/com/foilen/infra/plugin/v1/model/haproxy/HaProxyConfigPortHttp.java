@@ -13,23 +13,21 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.foilen.smalltools.tuple.Tuple2;
+import com.foilen.smalltools.tools.CollectionsTools;
 
 public class HaProxyConfigPortHttp extends HaProxyConfigPort {
 
     protected HaProxyConfigPortHttpService defaultService;
     protected Map<String, HaProxyConfigPortHttpService> serviceByHostname = new TreeMap<>();
 
-    @SafeVarargs
-    public final void addService(Collection<String> hostnames, Tuple2<String, Integer>... endpointHostPorts) {
+    public void addService(Collection<String> hostnames, HaProxyConfigEndpoint... endpoints) {
         for (String hostname : hostnames) {
-            serviceByHostname.put(hostname, new HaProxyConfigPortHttpService(endpointHostPorts));
+            CollectionsTools.getOrCreateEmpty(serviceByHostname, hostname, HaProxyConfigPortHttpService.class).addEndpointHostPorts(endpoints);
         }
     }
 
-    @SafeVarargs
-    public final void addService(String hostname, Tuple2<String, Integer>... endpointHostPorts) {
-        serviceByHostname.put(hostname, new HaProxyConfigPortHttpService(endpointHostPorts));
+    public void addService(String hostname, HaProxyConfigEndpoint... endpoints) {
+        CollectionsTools.getOrCreateEmpty(serviceByHostname, hostname, HaProxyConfigPortHttpService.class).addEndpointHostPorts(endpoints);
     }
 
     public HaProxyConfigPortHttpService getDefaultService() {

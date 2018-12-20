@@ -16,6 +16,7 @@ import java.util.List;
 public class DockerContainerEndpoints {
 
     public static final String HTTP_TCP = "HTTP_TCP";
+    public static final String HTTPS_TCP = "HTTPS_TCP";
     public static final String MONGODB_TCP = "MONGODB_TCP";
     public static final String MYSQL_TCP = "MYSQL_TCP";
     public static final String POSTGRESQL_TCP = "POSTGRESQL_TCP";
@@ -23,6 +24,7 @@ public class DockerContainerEndpoints {
 
     public static final List<String> allValues = Collections.unmodifiableList(Arrays.asList( //
             HTTP_TCP, //
+            HTTPS_TCP, //
             MONGODB_TCP, //
             MYSQL_TCP, //
             POSTGRESQL_TCP, //

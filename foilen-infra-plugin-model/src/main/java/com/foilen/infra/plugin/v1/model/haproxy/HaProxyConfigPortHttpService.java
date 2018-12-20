@@ -12,29 +12,23 @@ package com.foilen.infra.plugin.v1.model.haproxy;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.foilen.smalltools.tuple.Tuple2;
-
 public class HaProxyConfigPortHttpService {
 
-    protected Set<String> endpointHostPorts = new TreeSet<>();
+    protected Set<HaProxyConfigEndpoint> endpoints = new TreeSet<>();
 
-    @SafeVarargs
-    public HaProxyConfigPortHttpService(Tuple2<String, Integer>... endpointHostPorts) {
-        for (Tuple2<String, Integer> endpointHostPort : endpointHostPorts) {
-            String host = endpointHostPort.getA();
-            if (host == null) {
-                host = "192.168.255.1";
-            }
-            this.endpointHostPorts.add(host + ":" + endpointHostPort.getB());
+    public HaProxyConfigPortHttpService addEndpointHostPorts(HaProxyConfigEndpoint... endpoints) {
+        for (HaProxyConfigEndpoint endpoint : endpoints) {
+            this.endpoints.add(endpoint);
         }
+        return this;
     }
 
-    public Set<String> getEndpointHostPorts() {
-        return endpointHostPorts;
+    public Set<HaProxyConfigEndpoint> getEndpoints() {
+        return endpoints;
     }
 
-    public void setEndpointHostPorts(Set<String> endpointHostPorts) {
-        this.endpointHostPorts = endpointHostPorts;
+    public void setEndpoints(Set<HaProxyConfigEndpoint> endpoints) {
+        this.endpoints = endpoints;
     }
 
 }

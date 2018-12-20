@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfig;
+import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigEndpoint;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttp;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttpService;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttps;
@@ -43,15 +44,15 @@ public class HaProxyConfigOutputTest {
         http = haProxyConfig.addPortHttp(80);
         https = haProxyConfig.addPortHttps(443, "/certificates");
 
-        http.setDefaultService(new HaProxyConfigPortHttpService(new Tuple2<>("172.17.0.5", 5009)));
-        http.addService("dev.test.com", new Tuple2<>("172.17.0.6", 6009));
-        http.addService("mysql.test.com", new Tuple2<>("172.17.0.8", 8009));
-        http.addService("test.test.com", new Tuple2<>("172.17.0.7", 7009));
+        http.setDefaultService(new HaProxyConfigPortHttpService().addEndpointHostPorts(new HaProxyConfigEndpoint("172.17.0.5", 5009)));
+        http.addService("dev.test.com", new HaProxyConfigEndpoint("172.17.0.6", 6009));
+        http.addService("mysql.test.com", new HaProxyConfigEndpoint("172.17.0.8", 8009));
+        http.addService("test.test.com", new HaProxyConfigEndpoint("172.17.0.7", 7009));
 
-        https.setDefaultService(new HaProxyConfigPortHttpService(new Tuple2<>("172.17.0.5", 5009)));
-        https.addService("dev.test.com", new Tuple2<>("172.17.0.6", 6009));
-        https.addService("mysql.test.com", new Tuple2<>("172.17.0.8", 8009));
-        https.addService("test.test.com", new Tuple2<>("172.17.0.7", 7009));
+        https.setDefaultService(new HaProxyConfigPortHttpService().addEndpointHostPorts(new HaProxyConfigEndpoint("172.17.0.5", 5009)));
+        https.addService("dev.test.com", new HaProxyConfigEndpoint("172.17.0.6", 6009));
+        https.addService("mysql.test.com", new HaProxyConfigEndpoint("172.17.0.8", 8009));
+        https.addService("test.test.com", new HaProxyConfigEndpoint("172.17.0.7", 7009));
     }
 
     @Test
@@ -64,7 +65,7 @@ public class HaProxyConfigOutputTest {
     @Test
     public void testToConfigFile_NoHttpBack() {
         // Remove backend http_80_mysql.test.com 172.17.0.8:8009
-        http.getServiceByHostname().get("mysql.test.com").getEndpointHostPorts().clear();
+        http.getServiceByHostname().get("mysql.test.com").getEndpoints().clear();
 
         String actual = HaProxyConfigOutput.toConfigFile(haProxyConfig);
         String expected = ResourceTools.getResourceAsString("HaProxyConfigOutputTest-testToConfigFile_NoHttpBack-expected.txt", this.getClass());
@@ -81,10 +82,10 @@ public class HaProxyConfigOutputTest {
         http = haProxyConfig.addPortHttp(80);
         https = haProxyConfig.addPortHttps(443, "/certificates");
 
-        http.setDefaultService(new HaProxyConfigPortHttpService(new Tuple2<>("172.17.0.5", 5009)));
-        http.addService("dev.test.com", new Tuple2<>("172.17.0.6", 6009));
-        http.addService("mysql.test.com", new Tuple2<>("172.17.0.8", 8009));
-        http.addService("test.test.com", new Tuple2<>("172.17.0.7", 7009));
+        http.setDefaultService(new HaProxyConfigPortHttpService().addEndpointHostPorts(new HaProxyConfigEndpoint("172.17.0.5", 5009)));
+        http.addService("dev.test.com", new HaProxyConfigEndpoint("172.17.0.6", 6009));
+        http.addService("mysql.test.com", new HaProxyConfigEndpoint("172.17.0.8", 8009));
+        http.addService("test.test.com", new HaProxyConfigEndpoint("172.17.0.7", 7009));
 
         String actual = HaProxyConfigOutput.toConfigFile(haProxyConfig);
         String expected = ResourceTools.getResourceAsString("HaProxyConfigOutputTest-testToConfigFile_NoHttps-expected.txt", this.getClass());
@@ -94,7 +95,7 @@ public class HaProxyConfigOutputTest {
     @Test
     public void testToConfigFile_NoHttpsBack() {
         // Remove backend https_443_mysql.test.com 172.17.0.8:8009
-        https.getServiceByHostname().get("mysql.test.com").getEndpointHostPorts().clear();
+        https.getServiceByHostname().get("mysql.test.com").getEndpoints().clear();
 
         String actual = HaProxyConfigOutput.toConfigFile(haProxyConfig);
         String expected = ResourceTools.getResourceAsString("HaProxyConfigOutputTest-testToConfigFile_NoHttpsBack-expected.txt", this.getClass());
@@ -112,6 +113,44 @@ public class HaProxyConfigOutputTest {
     }
 
     @Test
+    public void testToConfigFile_WithBackendsHttps() {
+        haProxyConfig = new HaProxyConfig();
+        haProxyConfig.setDaemon(true);
+        haProxyConfig.setChroot("/var/lib/haproxy");
+        haProxyConfig.setPidfile("/_infra/haproxy.pid");
+
+        http = haProxyConfig.addPortHttp(80);
+        https = haProxyConfig.addPortHttps(443, "/certificates");
+
+        http.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.5", 8080));
+        http.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.6", 4433).setSsl(true));
+        https.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.5", 8080));
+        https.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.6", 4433).setSsl(true));
+
+        String actual = HaProxyConfigOutput.toConfigFile(haProxyConfig);
+        String expected = ResourceTools.getResourceAsString("HaProxyConfigOutputTest-testToConfigFile_WithBackendsHttps-expected.txt", this.getClass());
+        AssertTools.assertIgnoreLineFeed(expected, actual);
+    }
+
+    @Test
+    public void testToConfigFile_WithBackendsHttpsOnly() {
+        haProxyConfig = new HaProxyConfig();
+        haProxyConfig.setDaemon(true);
+        haProxyConfig.setChroot("/var/lib/haproxy");
+        haProxyConfig.setPidfile("/_infra/haproxy.pid");
+
+        http = haProxyConfig.addPortHttp(80);
+        https = haProxyConfig.addPortHttps(443, "/certificates");
+
+        http.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.6", 4433).setSsl(true));
+        https.addService("special.test.com", new HaProxyConfigEndpoint("172.17.0.6", 4433).setSsl(true));
+
+        String actual = HaProxyConfigOutput.toConfigFile(haProxyConfig);
+        String expected = ResourceTools.getResourceAsString("HaProxyConfigOutputTest-testToConfigFile_WithBackendsHttpsOnly-expected.txt", this.getClass());
+        AssertTools.assertIgnoreLineFeed(expected, actual);
+    }
+
+    @Test
     public void testToConfigFileWithNulls() {
 
         haProxyConfig = new HaProxyConfig();
@@ -124,10 +163,10 @@ public class HaProxyConfigOutputTest {
         HaProxyConfigPortHttp http = haProxyConfig.addPortHttp(80);
         HaProxyConfigPortHttps https = haProxyConfig.addPortHttps(443, "/certificates");
 
-        http.setDefaultService(new HaProxyConfigPortHttpService(new Tuple2<>(null, 5009)));
-        http.addService("dev.test.com", new Tuple2<>(null, 6009));
-        http.addService("mysql.test.com", new Tuple2<>(null, 8009));
-        http.addService("test.test.com", new Tuple2<>(null, 7009));
+        http.setDefaultService(new HaProxyConfigPortHttpService().addEndpointHostPorts(new HaProxyConfigEndpoint(null, 5009)));
+        http.addService("dev.test.com", new HaProxyConfigEndpoint(null, 6009));
+        http.addService("mysql.test.com", new HaProxyConfigEndpoint(null, 8009));
+        http.addService("test.test.com", new HaProxyConfigEndpoint(null, 7009));
 
         https.setDefaultService(http.getDefaultService());
         https.setServiceByHostname(http.getServiceByHostname());

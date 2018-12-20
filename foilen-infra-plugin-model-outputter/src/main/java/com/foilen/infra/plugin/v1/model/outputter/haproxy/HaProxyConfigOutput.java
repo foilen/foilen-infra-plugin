@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfig;
+import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigEndpoint;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPort;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttp;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttpService;
@@ -20,6 +21,7 @@ import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttps;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortTcp;
 import com.google.common.base.Strings;
 
+// https://cbonte.github.io/haproxy-dconv/1.7/configuration.html
 public class HaProxyConfigOutput {
 
     private static void appendBackend(StringBuilder backends, int port, String hostname, HaProxyConfigPortHttpService service, boolean isHttps) {
@@ -35,12 +37,16 @@ public class HaProxyConfigOutput {
         backends.append("  option forwardfor\n");
         backends.append("  mode http\n");
         int count = 1;
-        for (String endpointHostPort : service.getEndpointHostPorts()) {
+        for (HaProxyConfigEndpoint endpoint : service.getEndpoints()) {
             backends.append("  server http");
             if (isHttps) {
                 backends.append("s");
             }
-            backends.append("_").append(port).append("_").append(hostname).append("_").append(count++).append(" ").append(endpointHostPort).append(" check\n");
+            backends.append("_").append(port).append("_").append(hostname).append("_").append(count++).append(" ").append(endpoint.getHostPort()).append(" check");
+            if (endpoint.isSsl()) {
+                backends.append(" ssl verify none");
+            }
+            backends.append("\n");
         }
         backends.append("\n");
     }
@@ -51,7 +57,7 @@ public class HaProxyConfigOutput {
 
     private static void appendBackends(StringBuilder backends, int port, Map<String, HaProxyConfigPortHttpService> serviceByHostname, boolean isHttps) {
         for (Entry<String, HaProxyConfigPortHttpService> entry : serviceByHostname.entrySet()) {
-            if (entry.getValue().getEndpointHostPorts().isEmpty()) {
+            if (entry.getValue().getEndpoints().isEmpty()) {
                 continue;
             }
             appendBackend(backends, port, entry.getKey(), entry.getValue(), isHttps);
@@ -109,11 +115,11 @@ public class HaProxyConfigOutput {
                 content.append("  bind ").append(portConfig.getBindHost()).append(":").append(port).append(" ssl crt ").append(portConfig.getCertificatesDirectory()).append("\n");
                 content.append("  reqadd X-Forwarded-Proto:\\ https").append("\n");
                 content.append("\n");
-                if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpointHostPorts().isEmpty()) {
+                if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpoints().isEmpty()) {
                     content.append("  default_backend https_").append(port).append("_default\n");
                 }
                 for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
-                    if (entry.getValue().getEndpointHostPorts().isEmpty()) {
+                    if (entry.getValue().getEndpoints().isEmpty()) {
                         continue;
                     }
                     String hostName = entry.getKey();
@@ -137,18 +143,18 @@ public class HaProxyConfigOutput {
                 content.append("  reqadd X-Forwarded-Proto:\\ http").append("\n");
                 content.append("\n");
                 for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
-                    if (entry.getValue().getEndpointHostPorts().isEmpty()) {
+                    if (entry.getValue().getEndpoints().isEmpty()) {
                         continue;
                     }
                     String hostName = entry.getKey();
                     content.append("  acl http_").append(port).append("_").append(hostName).append(" hdr(host) -i ").append(hostName).append("\n");
                 }
                 content.append("\n");
-                if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpointHostPorts().isEmpty()) {
+                if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpoints().isEmpty()) {
                     content.append("  default_backend http_").append(port).append("_default\n");
                 }
                 for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
-                    if (entry.getValue().getEndpointHostPorts().isEmpty()) {
+                    if (entry.getValue().getEndpoints().isEmpty()) {
                         continue;
                     }
                     String hostName = entry.getKey();
@@ -165,8 +171,8 @@ public class HaProxyConfigOutput {
                 content.append("  bind ").append(portConfig.getBindHost()).append(":").append(port).append("\n");
                 content.append("  mode tcp").append("\n");
                 int count = 1;
-                for (String endpointHostPort : portConfig.getEndpointHostPorts()) {
-                    content.append("  server port_").append(port).append("_").append(count++).append(" ").append(endpointHostPort).append(" check\n");
+                for (String endpoint : portConfig.getEndpointHostPorts()) {
+                    content.append("  server port_").append(port).append("_").append(count++).append(" ").append(endpoint).append(" check\n");
                 }
             }
 

@@ -4,6 +4,7 @@ dependencies {
 
   compile "org.slf4j:slf4j-api"
   
+  testCompile "org.freemarker:freemarker:2.3.23"
   testCompile "org.slf4j:slf4j-api"
   testCompile "junit:junit"
 

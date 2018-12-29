@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinition;
+import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionService;
 import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionVolume;
 import com.foilen.infra.plugin.v1.model.docker.DockerContainerEndpoints;
 import com.foilen.smalltools.test.asserts.AssertTools;
@@ -72,6 +73,15 @@ public class DockerContainerOutputTest {
         String actual = DockerContainerOutput.toDockerfile(applicationDefinition, ctx);
         String expected = ResourceTools.getResourceAsString("DockerContainerOutputTest-testToDockerfile_NoInfra-expected.txt", this.getClass());
         AssertTools.assertIgnoreLineFeed(expected, actual);
+    }
+
+    @Test
+    public void testToDockerfile_NoInfra_MultipleServices() {
+        applicationDefinition.getPortsRedirect().clear();
+        applicationDefinition.getServices().add(new IPApplicationDefinitionService("other", "/other-start.sh", 0L));
+
+        IPApplicationDefinition actual = DockerContainerOutput.addInfrastructure(applicationDefinition, ctx);
+        AssertTools.assertJsonComparisonWithoutNulls("DockerContainerOutputTest-testToDockerfile_NoInfra_MultipleServices-expected.txt", this.getClass(), actual);
     }
 
     @Test

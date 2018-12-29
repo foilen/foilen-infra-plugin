@@ -65,7 +65,8 @@ public class DockerContainerOutput {
         // Use a single assetsBundle for (supervisor if more than 1 service ; if infra)
         List<IPApplicationDefinitionPortRedirect> portsRedirect = transformedApplicationDefinition.getPortsRedirect();
         IPApplicationDefinitionAssetsBundle assetsBundle = transformedApplicationDefinition.addAssetsBundle();
-        if (!portsRedirect.isEmpty() || services.size() > 1) {
+        boolean infraChmodAdded = false;
+        if (!portsRedirect.isEmpty() || services.size() > 1 || (!Strings.isNullOrEmpty(transformedApplicationDefinition.getCommand()) && !services.isEmpty())) {
             logger.info("[{}] Has multiple services to run or some port redirects", imageName);
 
             // Make sure there is at least one known service/command to run
@@ -74,7 +75,9 @@ public class DockerContainerOutput {
             }
 
             // Move the current command to a service
+            Long initialRunAs = transformedApplicationDefinition.getRunAs();
             if (transformedApplicationDefinition.getCommand() != null) {
+                logger.info("[{}] There is one main command. Moving it to a service", imageName);
                 IPApplicationDefinitionService commandToService = new IPApplicationDefinitionService("_main", transformedApplicationDefinition.getCommand(),
                         transformedApplicationDefinition.getRunAs());
                 commandToService.setWorkingDirectory(transformedApplicationDefinition.getWorkingDirectory());
@@ -82,23 +85,12 @@ public class DockerContainerOutput {
                 serviceAndIsInfras.add(new Tuple2<>(commandToService, false));
                 transformedApplicationDefinition.setCommand(null);
                 transformedApplicationDefinition.setWorkingDirectory(null);
+                transformedApplicationDefinition.setRunAs(0L);
             }
             transformedApplicationDefinition.setEntrypoint(new ArrayList<>());
 
             // Add infra if needed
             if (!portsRedirect.isEmpty()) {
-
-                // Change the container to run as root, the haproxy as root and all the other services as the container user
-                Long runAs = transformedApplicationDefinition.getRunAs();
-                if (runAs != null && runAs != 0) {
-                    logger.info("[{}] Changing the instance user to root and all the services to {}", imageName, runAs);
-                    transformedApplicationDefinition.setRunAs(0L);
-                    for (IPApplicationDefinitionService service : transformedApplicationDefinition.getServices()) {
-                        if (service.getRunAs() == null) {
-                            service.setRunAs(runAs);
-                        }
-                    }
-                }
 
                 HaProxyConfig haProxyConfig = new HaProxyConfig();
                 haProxyConfig.setUser(null);
@@ -132,6 +124,17 @@ public class DockerContainerOutput {
                 IPApplicationDefinitionService service = new IPApplicationDefinitionService("_infra_ha_proxy", HaProxyConfigOutput.toRun(haProxyConfig, "/_infra/_infra_ha_proxy.cfg"));
                 Tuple2<IPApplicationDefinitionService, Boolean> serviceAndIsInfra = new Tuple2<>(service, true);
                 serviceAndIsInfras.add(serviceAndIsInfra);
+            }
+
+            // Change the container to run as root, the haproxy as root and all the other services as the container user
+            if (initialRunAs != null && initialRunAs != 0) {
+                logger.info("[{}] Changing the instance user to root and all the services to {}", imageName, initialRunAs);
+                transformedApplicationDefinition.setRunAs(0L);
+                for (IPApplicationDefinitionService service : transformedApplicationDefinition.getServices()) {
+                    if (service.getRunAs() == null) {
+                        service.setRunAs(initialRunAs);
+                    }
+                }
             }
 
             // Supervisor command & user list
@@ -177,8 +180,12 @@ public class DockerContainerOutput {
             assetsBundle.addAssetContent("_infra/startSupervisord.sh", mainScriptContent);
             transformedApplicationDefinition.setCommand("/_infra/startSupervisord.sh");
             transformedApplicationDefinition.setWorkingDirectory("/_infra/");
+            transformedApplicationDefinition.setRunAs(0L);
 
-            transformedApplicationDefinition.addBuildStepCommand("chmod -R 777 /_infra/");
+            if (!infraChmodAdded) {
+                transformedApplicationDefinition.addBuildStepCommand("chmod -R 777 /_infra/");
+                infraChmodAdded = true;
+            }
 
             assetsBundle.addAssetContent("_infra/supervisord.conf", supervisorConfigContent.toString());
 
@@ -193,7 +200,10 @@ public class DockerContainerOutput {
         // If there are users to fix, add the script
         if (!transformedApplicationDefinition.getContainerUsersToChangeId().isEmpty()) {
             assetsBundle.addAssetResource("_infra/fixUserPermissions.sh", "/com/foilen/infra/plugin/v1/model/outputter/docker/fixUserPermissions.sh");
-            transformedApplicationDefinition.addBuildStepCommand("chmod -R 777 /_infra/");
+            if (!infraChmodAdded) {
+                transformedApplicationDefinition.addBuildStepCommand("chmod -R 777 /_infra/");
+                infraChmodAdded = true;
+            }
         }
 
         if (logger.isDebugEnabled()) {

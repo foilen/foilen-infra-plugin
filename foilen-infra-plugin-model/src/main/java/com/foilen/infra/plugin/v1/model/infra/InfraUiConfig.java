@@ -18,6 +18,7 @@ public class InfraUiConfig {
 
     // UI
     private String baseUrl;
+    private Long infiniteLoopTimeoutInMs;
 
     // MySql
     private String mysqlHostName;
@@ -49,6 +50,10 @@ public class InfraUiConfig {
 
     public String getCsrfSalt() {
         return csrfSalt;
+    }
+
+    public Long getInfiniteLoopTimeoutInMs() {
+        return infiniteLoopTimeoutInMs;
     }
 
     public InfraLoginConfigDetails getLoginConfigDetails() {
@@ -109,6 +114,10 @@ public class InfraUiConfig {
 
     public void setCsrfSalt(String csrfSalt) {
         this.csrfSalt = csrfSalt;
+    }
+
+    public void setInfiniteLoopTimeoutInMs(Long infiniteLoopTimeoutInMs) {
+        this.infiniteLoopTimeoutInMs = infiniteLoopTimeoutInMs;
     }
 
     public void setLoginConfigDetails(InfraLoginConfigDetails loginConfigDetails) {

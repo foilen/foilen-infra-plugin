@@ -40,27 +40,6 @@ public class CommonFormattingTest {
     }
 
     @Test
-    public void testNullIfEmpty() {
-
-        Map<String, String> expectedFormValues = new HashMap<>();
-        expectedFormValues.put("alreadyEmpty", null);
-        expectedFormValues.put("something", "10");
-        expectedFormValues.put("aList[0]", "10");
-        expectedFormValues.put("aList[1]", null);
-
-        Map<String, String> actualFormValues = new HashMap<>();
-        actualFormValues.put("alreadyEmpty", "");
-        actualFormValues.put("something", "10");
-        actualFormValues.put("aList[0]", "10");
-        actualFormValues.put("aList[1]", null);
-
-        CommonFormatting.nullIfEmpty(actualFormValues, "isNull", "alreadyEmpty", "something", "aList");
-
-        Assert.assertEquals(expectedFormValues, actualFormValues);
-
-    }
-
-    @Test
     public void testFirstLetterOfEachWordCapital() {
 
         Map<String, String> expectedFormValues = new HashMap<>();
@@ -82,6 +61,27 @@ public class CommonFormattingTest {
         actualFormValues.put("aList[1]", "yep");
 
         CommonFormatting.firstLetterOfEachWordCapital(actualFormValues, "empty", "aNumber", "isNull", "lowers", "many", "uppers", "aList");
+
+        Assert.assertEquals(expectedFormValues, actualFormValues);
+
+    }
+
+    @Test
+    public void testNullIfEmpty() {
+
+        Map<String, String> expectedFormValues = new HashMap<>();
+        expectedFormValues.put("alreadyEmpty", null);
+        expectedFormValues.put("something", "10");
+        expectedFormValues.put("aList[0]", "10");
+        expectedFormValues.put("aList[1]", null);
+
+        Map<String, String> actualFormValues = new HashMap<>();
+        actualFormValues.put("alreadyEmpty", "");
+        actualFormValues.put("something", "10");
+        actualFormValues.put("aList[0]", "10");
+        actualFormValues.put("aList[1]", null);
+
+        CommonFormatting.nullIfEmpty(actualFormValues, "isNull", "alreadyEmpty", "something", "aList");
 
         Assert.assertEquals(expectedFormValues, actualFormValues);
 

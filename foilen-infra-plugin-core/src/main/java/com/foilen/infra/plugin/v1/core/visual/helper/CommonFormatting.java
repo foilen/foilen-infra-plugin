@@ -69,6 +69,21 @@ public class CommonFormatting {
         return fieldValue;
     }
 
+    public static void nullIfEmpty(Map<String, String> formValues, String... fieldNames) {
+        for (String fieldName : CommonFieldHelper.getAllFieldNames(formValues, fieldNames)) {
+            if ("".equals(formValues.get(fieldName))) {
+                formValues.put(fieldName, null);
+            }
+        }
+    }
+
+    public static String nullIfEmpty(String fieldValue) {
+        if ("".equals(fieldValue)) {
+            return null;
+        }
+        return fieldValue;
+    }
+
     public static void toLowerCase(Map<String, String> formValues) {
         Set<String> fieldNames = formValues.keySet();
         toLowerCase(formValues, fieldNames.toArray(new String[fieldNames.size()]));

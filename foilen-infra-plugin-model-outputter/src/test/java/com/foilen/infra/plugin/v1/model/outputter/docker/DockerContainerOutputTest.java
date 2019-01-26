@@ -102,6 +102,14 @@ public class DockerContainerOutputTest {
     }
 
     @Test
+    public void testToRunArgumentsSinglePassAttached_ip() {
+        ctx.setNetworkName("fcloud").setNetworkIp("172.20.5.1");
+        String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc:ro --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest --network=fcloud --ip=172.20.5.1 Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
+        String actual = joiner.join(DockerContainerOutput.toRunArgumentsSinglePassAttached(applicationDefinition, ctx));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testToRunArgumentsSinglePassAttached_WithInternalVolume() {
 
         applicationDefinition.addVolume(new IPApplicationDefinitionVolume(null, "/volumes/internal", null, null, null));

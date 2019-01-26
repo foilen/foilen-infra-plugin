@@ -459,6 +459,15 @@ public class DockerContainerOutput {
             arguments.add(ctx.getHostName());
         }
 
+        // Network
+        if (ctx.getNetworkName() != null) {
+            arguments.add("--network=" + ctx.getNetworkName());
+        }
+        if (ctx.getNetworkIp() != null) {
+            arguments.add("--ip=" + ctx.getNetworkIp());
+        }
+
+        // Image
         arguments.add(ctx.getImageName());
 
         // Command
@@ -538,6 +547,15 @@ public class DockerContainerOutput {
             arguments.add(ctx.getHostName());
         }
 
+        // Network
+        if (ctx.getNetworkName() != null) {
+            arguments.add("--network=" + ctx.getNetworkName());
+        }
+        if (ctx.getNetworkIp() != null) {
+            arguments.add("--ip=" + ctx.getNetworkIp());
+        }
+
+        // Image
         arguments.add(ctx.getImageName());
 
         // Command
@@ -616,6 +634,15 @@ public class DockerContainerOutput {
             arguments.add(ctx.getHostName());
         }
 
+        // Network
+        if (ctx.getNetworkName() != null) {
+            arguments.add("--network=" + ctx.getNetworkName());
+        }
+        if (ctx.getNetworkIp() != null) {
+            arguments.add("--ip=" + ctx.getNetworkIp());
+        }
+
+        // Image
         arguments.add(ctx.getImageName());
 
         // Command

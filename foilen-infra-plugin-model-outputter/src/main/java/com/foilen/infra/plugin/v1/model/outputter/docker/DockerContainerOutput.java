@@ -27,7 +27,6 @@ import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionPortRedirect
 import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionService;
 import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionVolume;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfig;
-import com.foilen.infra.plugin.v1.model.outputter.DockerMissingDependencyException;
 import com.foilen.infra.plugin.v1.model.outputter.ModelException;
 import com.foilen.infra.plugin.v1.model.outputter.haproxy.HaProxyConfigOutput;
 import com.foilen.smalltools.tools.DirectoryTools;
@@ -96,7 +95,6 @@ public class DockerContainerOutput {
                 haProxyConfig.setUser(null);
                 haProxyConfig.setGroup(null);
                 haProxyConfig.setTimeoutTunnelMs(10L * 60L * 1000L); // 10 minutes
-                boolean missingDependency = false;
                 for (IPApplicationDefinitionPortRedirect portRedirect : portsRedirect) {
                     String machineContainerEndpoint = portRedirect.getMachineContainerEndpoint();
 
@@ -108,7 +106,7 @@ public class DockerContainerOutput {
                     if (host == null || port == null) {
                         logger.error("[{}] Infra {} -> Missing dependency to {}", imageName, portRedirect.getLocalPort(), machineContainerEndpoint);
                         logger.debug("Known dependencies: {}", getKnownDependencies(ctx));
-                        missingDependency = true;
+                        haProxyConfig.addPortTcp(portRedirect.getLocalPort(), new Tuple2<>("127.0.0.1", 1));
                     } else {
                         logger.info("[{}] Infra {} -> {}:{}", imageName, portRedirect.getLocalPort(), host, port);
                         haProxyConfig.addPortTcp(portRedirect.getLocalPort(), new Tuple2<>(host, port));
@@ -116,10 +114,6 @@ public class DockerContainerOutput {
 
                 }
                 assetsBundle.addAssetContent("_infra/_infra_ha_proxy.cfg", HaProxyConfigOutput.toConfigFile(haProxyConfig));
-
-                if (missingDependency) {
-                    throw new DockerMissingDependencyException(imageName + " missing dependency");
-                }
 
                 IPApplicationDefinitionService service = new IPApplicationDefinitionService("_infra_ha_proxy", HaProxyConfigOutput.toRun(haProxyConfig, "/_infra/_infra_ha_proxy.cfg"));
                 Tuple2<IPApplicationDefinitionService, Boolean> serviceAndIsInfra = new Tuple2<>(service, true);

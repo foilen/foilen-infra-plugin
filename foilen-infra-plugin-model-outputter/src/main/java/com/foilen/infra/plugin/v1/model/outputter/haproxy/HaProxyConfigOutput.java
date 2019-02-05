@@ -115,6 +115,14 @@ public class HaProxyConfigOutput {
                 content.append("  bind ").append(portConfig.getBindHost()).append(":").append(port).append(" ssl crt ").append(portConfig.getCertificatesDirectory()).append("\n");
                 content.append("  reqadd X-Forwarded-Proto:\\ https").append("\n");
                 content.append("\n");
+                for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
+                    if (entry.getValue().getEndpoints().isEmpty()) {
+                        continue;
+                    }
+                    String hostName = entry.getKey();
+                    content.append("  acl https_").append(port).append("_").append(hostName).append(" hdr(host) -i ").append(hostName).append("\n");
+                }
+                content.append("\n");
                 if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpoints().isEmpty()) {
                     content.append("  default_backend https_").append(port).append("_default\n");
                 }
@@ -123,7 +131,7 @@ public class HaProxyConfigOutput {
                         continue;
                     }
                     String hostName = entry.getKey();
-                    content.append("  use_backend https_").append(port).append("_").append(hostName).append(" if { ssl_fc_sni ").append(hostName).append(" }").append("\n");
+                    content.append("  use_backend https_").append(port).append("_").append(hostName).append(" if https_").append(port).append("_").append(hostName).append("\n");
                 }
                 appendBackendDefault(backends, port, portConfig.getDefaultService(), true);
                 appendBackends(backends, port, portConfig.getServiceByHostname(), true);

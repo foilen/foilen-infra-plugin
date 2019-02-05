@@ -35,10 +35,14 @@ frontend port_443
   bind *:443 ssl crt /certificates
   reqadd X-Forwarded-Proto:\ https
 
+  acl https_443_dev.test.com hdr(host) -i dev.test.com
+  acl https_443_mysql.test.com hdr(host) -i mysql.test.com
+  acl https_443_test.test.com hdr(host) -i test.test.com
+
   default_backend https_443_default
-  use_backend https_443_dev.test.com if { ssl_fc_sni dev.test.com }
-  use_backend https_443_mysql.test.com if { ssl_fc_sni mysql.test.com }
-  use_backend https_443_test.test.com if { ssl_fc_sni test.test.com }
+  use_backend https_443_dev.test.com if https_443_dev.test.com
+  use_backend https_443_mysql.test.com if https_443_mysql.test.com
+  use_backend https_443_test.test.com if https_443_test.test.com
 
 backend http_80_default
   option httpclose

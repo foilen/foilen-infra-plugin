@@ -69,6 +69,14 @@ public class DockerContainerOutputContext {
         return imageName;
     }
 
+    public String getNetworkIp() {
+        return networkIp;
+    }
+
+    public String getNetworkName() {
+        return networkName;
+    }
+
     public Map<String, String> getRedirectIpByMachineContainerEndpoint() {
         return redirectIpByMachineContainerEndpoint;
     }
@@ -79,24 +87,6 @@ public class DockerContainerOutputContext {
 
     public DockerContainerOutputContext setBuildDirectory(String buildDirectory) {
         this.buildDirectory = buildDirectory;
-        return this;
-    }
-
-    public String getNetworkName() {
-        return networkName;
-    }
-
-    public DockerContainerOutputContext setNetworkName(String networkName) {
-        this.networkName = networkName;
-        return this;
-    }
-
-    public String getNetworkIp() {
-        return networkIp;
-    }
-
-    public DockerContainerOutputContext setNetworkIp(String networkIp) {
-        this.networkIp = networkIp;
         return this;
     }
 
@@ -116,6 +106,16 @@ public class DockerContainerOutputContext {
 
     public DockerContainerOutputContext setImageName(String imageName) {
         this.imageName = imageName;
+        return this;
+    }
+
+    public DockerContainerOutputContext setNetworkIp(String networkIp) {
+        this.networkIp = networkIp;
+        return this;
+    }
+
+    public DockerContainerOutputContext setNetworkName(String networkName) {
+        this.networkName = networkName;
         return this;
     }
 

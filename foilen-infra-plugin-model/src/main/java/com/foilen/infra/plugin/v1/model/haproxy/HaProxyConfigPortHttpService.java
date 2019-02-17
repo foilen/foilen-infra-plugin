@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 public class HaProxyConfigPortHttpService {
 
-    protected Set<HaProxyConfigEndpoint> endpoints = new TreeSet<>();
+    private Set<HaProxyConfigEndpoint> endpoints = new TreeSet<>();
 
     public HaProxyConfigPortHttpService addEndpointHostPorts(HaProxyConfigEndpoint... endpoints) {
         for (HaProxyConfigEndpoint endpoint : endpoints) {

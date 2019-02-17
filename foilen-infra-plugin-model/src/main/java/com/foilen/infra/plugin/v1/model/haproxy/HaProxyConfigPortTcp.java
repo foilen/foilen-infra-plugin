@@ -16,7 +16,7 @@ import com.foilen.smalltools.tuple.Tuple2;
 
 public class HaProxyConfigPortTcp extends HaProxyConfigPort {
 
-    protected Set<String> endpointHostPorts = new TreeSet<>();
+    private Set<String> endpointHostPorts = new TreeSet<>();
 
     @SafeVarargs
     public HaProxyConfigPortTcp(Tuple2<String, Integer>... endpointHostPorts) {

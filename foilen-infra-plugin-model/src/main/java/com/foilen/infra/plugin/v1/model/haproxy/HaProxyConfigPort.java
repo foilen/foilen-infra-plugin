@@ -11,7 +11,7 @@ package com.foilen.infra.plugin.v1.model.haproxy;
 
 public abstract class HaProxyConfigPort {
 
-    protected String bindHost = "*";
+    private String bindHost = "*";
 
     public String getBindHost() {
         return bindHost;

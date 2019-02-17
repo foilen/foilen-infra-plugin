@@ -18,6 +18,7 @@ import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPort;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttp;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttpService;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttps;
+import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortHttpsService;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfigPortTcp;
 import com.google.common.base.Strings;
 
@@ -55,8 +56,8 @@ public class HaProxyConfigOutput {
         appendBackend(backends, port, "default", defaultService, isHttps);
     }
 
-    private static void appendBackends(StringBuilder backends, int port, Map<String, HaProxyConfigPortHttpService> serviceByHostname, boolean isHttps) {
-        for (Entry<String, HaProxyConfigPortHttpService> entry : serviceByHostname.entrySet()) {
+    private static void appendBackends(StringBuilder backends, int port, Map<String, ? extends HaProxyConfigPortHttpService> serviceByHostname, boolean isHttps) {
+        for (Entry<String, ? extends HaProxyConfigPortHttpService> entry : serviceByHostname.entrySet()) {
             if (entry.getValue().getEndpoints().isEmpty()) {
                 continue;
             }
@@ -115,7 +116,7 @@ public class HaProxyConfigOutput {
                 content.append("  bind ").append(portConfig.getBindHost()).append(":").append(port).append(" ssl crt ").append(portConfig.getCertificatesDirectory()).append("\n");
                 content.append("  reqadd X-Forwarded-Proto:\\ https").append("\n");
                 content.append("\n");
-                for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
+                for (Entry<String, HaProxyConfigPortHttpsService> entry : portConfig.getServiceByHostname().entrySet()) {
                     if (entry.getValue().getEndpoints().isEmpty()) {
                         continue;
                     }
@@ -123,10 +124,27 @@ public class HaProxyConfigOutput {
                     content.append("  acl https_").append(port).append("_").append(hostName).append(" hdr(host) -i ").append(hostName).append("\n");
                 }
                 content.append("\n");
+
+                boolean gotOne = false;
+                for (Entry<String, HaProxyConfigPortHttpsService> entry : portConfig.getServiceByHostname().entrySet()) {
+                    if (entry.getValue().getEndpoints().isEmpty()) {
+                        continue;
+                    }
+                    String hostName = entry.getKey();
+                    if (entry.getValue().isOriginToHttp()) {
+                        content.append("  http-request replace-header Origin https://").append(hostName).append("(.*) http://").append(hostName).append("\\1 if https_").append(port).append("_")
+                                .append(hostName).append("\n");
+                        gotOne = true;
+                    }
+                }
+                if (gotOne) {
+                    content.append("\n");
+                }
+
                 if (portConfig.getDefaultService() != null && !portConfig.getDefaultService().getEndpoints().isEmpty()) {
                     content.append("  default_backend https_").append(port).append("_default\n");
                 }
-                for (Entry<String, HaProxyConfigPortHttpService> entry : portConfig.getServiceByHostname().entrySet()) {
+                for (Entry<String, HaProxyConfigPortHttpsService> entry : portConfig.getServiceByHostname().entrySet()) {
                     if (entry.getValue().getEndpoints().isEmpty()) {
                         continue;
                     }

@@ -9,9 +9,9 @@
  */
 package com.foilen.infra.plugin.v1.model.haproxy;
 
-public class HaProxyConfigPortHttps extends HaProxyConfigPortHttp {
+public class HaProxyConfigPortHttps extends AbstractHaProxyConfigPortHttp<HaProxyConfigPortHttpsService> {
 
-    protected String certificatesDirectory;
+    private String certificatesDirectory;
 
     public HaProxyConfigPortHttps() {
     }
@@ -20,8 +20,18 @@ public class HaProxyConfigPortHttps extends HaProxyConfigPortHttp {
         this.certificatesDirectory = certificatesDirectory;
     }
 
+    @Override
+    public HaProxyConfigPortHttpsService createConfig() {
+        return new HaProxyConfigPortHttpsService();
+    }
+
     public String getCertificatesDirectory() {
         return certificatesDirectory;
+    }
+
+    @Override
+    public Class<HaProxyConfigPortHttpsService> getConfigType() {
+        return HaProxyConfigPortHttpsService.class;
     }
 
     public void setCertificatesDirectory(String certificatesDirectory) {

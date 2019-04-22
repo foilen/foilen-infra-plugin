@@ -12,8 +12,8 @@ package com.foilen.infra.plugin.v1.core.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.foilen.infra.plugin.v1.core.context.ChangesEventContext;
 import com.foilen.infra.plugin.v1.core.context.CommonServicesContext;
-import com.foilen.infra.plugin.v1.core.context.UpdateEventContext;
 import com.foilen.infra.plugin.v1.core.context.internal.InternalServicesContext;
 import com.foilen.infra.plugin.v1.core.plugin.IPPluginDefinitionProvider;
 import com.foilen.infra.plugin.v1.core.plugin.IPPluginDefinitionV1;
@@ -41,6 +41,13 @@ public interface IPPluginService {
     List<Tuple3<Class<? extends IPPluginDefinitionProvider>, IPPluginDefinitionV1, String>> getBrokenPlugins();
 
     /**
+     * Get all the changes event handlers.
+     *
+     * @return the immutable list of handlers
+     */
+    List<ChangesEventContext> getChangesEvents();
+
+    /**
      * Get the resource editor.
      *
      * @param editorName
@@ -57,13 +64,6 @@ public interface IPPluginService {
      * @return the list of editors names
      */
     List<String> getResourceEditorNamesByResourceType(Class<? extends IPResource> resourceType);
-
-    /**
-     * Get all the update event handlers.
-     *
-     * @return the immutable list of handlers
-     */
-    List<UpdateEventContext> getUpdateEvents();
 
     /**
      * Load all the plugins.

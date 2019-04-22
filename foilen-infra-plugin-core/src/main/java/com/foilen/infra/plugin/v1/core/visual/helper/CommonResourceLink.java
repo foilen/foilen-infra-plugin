@@ -508,7 +508,30 @@ public class CommonResourceLink {
     public static <L extends IPResource> void syncFromLinks(CommonServicesContext servicesCtx, ChangesContext changesContext, //
             Class<L> resourceFromType, String linkType, IPResource toResource, List<L> finalFromResources) {
 
-        IPResourceService resourceService = servicesCtx.getResourceService();
+        syncFromLinks(servicesCtx.getResourceService(), changesContext, resourceFromType, linkType, toResource, finalFromResources);
+    }
+
+    /**
+     * Add missing links and remove extra ones.
+     *
+     * @param resourceService
+     *            the resource service
+     * @param changesContext
+     *            the change context where to add the modifications
+     * @param resourceFromType
+     *            the type of the "from" resource of the links
+     * @param linkType
+     *            the type of link. Can be one from {@link LinkTypeConstants} or any other String.
+     * @param toResource
+     *            the "to" resource
+     * @param finalFromResources
+     *            all the "from" resources that you want at the end
+     * @param <L>
+     *            type of liked resource
+     */
+    public static <L extends IPResource> void syncFromLinks(IPResourceService resourceService, ChangesContext changesContext, //
+            Class<L> resourceFromType, String linkType, IPResource toResource, List<L> finalFromResources) {
+
         List<L> currentFromResources;
         if (toResource.getInternalId() == null) {
             currentFromResources = Collections.emptyList();
@@ -553,7 +576,30 @@ public class CommonResourceLink {
     public static <L extends IPResource> void syncToLinks(CommonServicesContext servicesCtx, ChangesContext changesContext, //
             IPResource fromResource, String linkType, Class<L> resourceToType, List<L> finalToResources) {
 
-        IPResourceService resourceService = servicesCtx.getResourceService();
+        syncToLinks(servicesCtx.getResourceService(), changesContext, fromResource, linkType, resourceToType, finalToResources);
+    }
+
+    /**
+     * Add missing links and remove extra ones.
+     *
+     * @param resourceService
+     *            the resource service
+     * @param changesContext
+     *            the change context where to add the modifications
+     * @param fromResource
+     *            the "from" resource
+     * @param linkType
+     *            the type of link. Can be one from {@link LinkTypeConstants} or any other String.
+     * @param resourceToType
+     *            the type of the "to" resource of the links
+     * @param finalToResources
+     *            all the "to" resources that you want at the end
+     * @param <L>
+     *            type of liked resource
+     */
+    public static <L extends IPResource> void syncToLinks(IPResourceService resourceService, ChangesContext changesContext, //
+            IPResource fromResource, String linkType, Class<L> resourceToType, List<L> finalToResources) {
+
         List<L> currentToResources;
         if (fromResource.getInternalId() == null) {
             currentToResources = Collections.emptyList();

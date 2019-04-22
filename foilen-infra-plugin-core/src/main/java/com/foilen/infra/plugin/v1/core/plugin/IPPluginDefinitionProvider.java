@@ -10,6 +10,7 @@
 package com.foilen.infra.plugin.v1.core.plugin;
 
 import com.foilen.infra.plugin.v1.core.context.CommonServicesContext;
+import com.foilen.infra.plugin.v1.core.context.internal.InternalServicesContext;
 
 /**
  * Implement this interface to make your plugin aware from the system.
@@ -23,6 +24,9 @@ public interface IPPluginDefinitionProvider {
      *
      * @param commonServicesContext
      *            the services
+     * @param internalServicesContext
+     *            the internal services
      */
-    void initialize(CommonServicesContext commonServicesContext);
+    default void initialize(CommonServicesContext commonServicesContext, InternalServicesContext internalServicesContext) {
+    }
 }

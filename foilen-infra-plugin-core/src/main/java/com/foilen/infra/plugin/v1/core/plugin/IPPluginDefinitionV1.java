@@ -14,11 +14,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import com.foilen.infra.plugin.v1.core.context.ChangesEventContext;
 import com.foilen.infra.plugin.v1.core.context.ResourceEditorContext;
 import com.foilen.infra.plugin.v1.core.context.TimerEventContext;
-import com.foilen.infra.plugin.v1.core.context.UpdateEventContext;
+import com.foilen.infra.plugin.v1.core.eventhandler.ChangesEventHandler;
 import com.foilen.infra.plugin.v1.core.eventhandler.TimerEventHandler;
-import com.foilen.infra.plugin.v1.core.eventhandler.UpdateEventHandler;
 import com.foilen.infra.plugin.v1.core.resource.IPResourceDefinition;
 import com.foilen.infra.plugin.v1.core.visual.editor.ResourceEditor;
 import com.foilen.infra.plugin.v1.model.resource.IPResource;
@@ -33,7 +33,7 @@ public class IPPluginDefinitionV1 {
 
     // Extension points
     private List<TimerEventContext> timers = new ArrayList<>();
-    private List<UpdateEventContext> updateHandlers = new ArrayList<>();
+    private List<ChangesEventContext> changesHandlers = new ArrayList<>();
     private List<IPResourceDefinition> customResources = new ArrayList<>();
     private List<ResourceEditorContext> resourceEditors = new ArrayList<>();
     private List<String> translations = new ArrayList<>();
@@ -43,6 +43,29 @@ public class IPPluginDefinitionV1 {
         this.pluginName = pluginName;
         this.pluginDescription = pluginDescription;
         this.pluginVersion = pluginVersion;
+    }
+
+    /**
+     * Add a changes event handler. Uses the simple class name as the change handler name.
+     *
+     * @param handler
+     *            the event handler
+     */
+    public void addChangesHandler(ChangesEventHandler handler) {
+        String changeHandlerName = handler.getClass().getSimpleName();
+        changesHandlers.add(new ChangesEventContext(handler, changeHandlerName));
+    }
+
+    /**
+     * Add a changes event handler.
+     *
+     * @param handler
+     *            the event handler
+     * @param changeHandlerName
+     *            the handler's name
+     */
+    public void addChangesHandler(ChangesEventHandler handler, String changeHandlerName) {
+        changesHandlers.add(new ChangesEventContext(handler, changeHandlerName));
     }
 
     /**
@@ -138,27 +161,8 @@ public class IPPluginDefinitionV1 {
         translations.add(basename);
     }
 
-    /**
-     * Add an update event handler. Uses the simple class name as the update handler name.
-     *
-     * @param handler
-     *            the event handler
-     */
-    public void addUpdateHandler(UpdateEventHandler<?> handler) {
-        String updateHandlerName = handler.getClass().getSimpleName();
-        updateHandlers.add(new UpdateEventContext(handler, updateHandlerName));
-    }
-
-    /**
-     * Add an update event handler.
-     *
-     * @param handler
-     *            the event handler
-     * @param updateHandlerName
-     *            the name of the handler
-     */
-    public void addUpdateHandler(UpdateEventHandler<?> handler, String updateHandlerName) {
-        updateHandlers.add(new UpdateEventContext(handler, updateHandlerName));
+    public List<ChangesEventContext> getChangesHandlers() {
+        return changesHandlers;
     }
 
     public List<IPResourceDefinition> getCustomResources() {
@@ -191,10 +195,6 @@ public class IPPluginDefinitionV1 {
 
     public List<String> getTranslations() {
         return translations;
-    }
-
-    public List<UpdateEventContext> getUpdateHandlers() {
-        return updateHandlers;
     }
 
     public IPPluginDefinitionV1 setPluginDescription(String pluginDescription) {

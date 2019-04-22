@@ -81,7 +81,7 @@ public class ChangesContext {
     }
 
     public List<Long> getResourcesToRefresh() {
-        return Collections.unmodifiableList(resourcesToRefresh);
+        return resourcesToRefresh;
     }
 
     /**
@@ -179,23 +179,15 @@ public class ChangesContext {
     }
 
     public void resourceRefresh(IPResource resource) {
-        Long internalId = resource.getInternalId();
-        if (internalId == null) {
-            Optional<IPResource> found = resourceService.resourceFindByPk(resource);
-            if (found.isPresent()) {
-                internalId = found.get().getInternalId();
-            }
-        }
-        resourceRefresh(internalId);
+        resourceRefresh(resource.getInternalId());
     }
 
     public void resourceRefresh(Long resourceId) {
         if (resourceId == null) {
-            throw new IllegalUpdateException("Cannot delete a resource without id");
+            throw new IllegalUpdateException("Cannot refresh a resource without id");
         }
-        if (!resourcesToRefresh.contains(resourceId)) {
-            resourcesToRefresh.add(resourceId);
-        }
+
+        resourcesToRefresh.add(resourceId);
     }
 
     public void resourceUpdate(IPResource resource) {
@@ -214,7 +206,6 @@ public class ChangesContext {
         // Remove previous update
         resourcesToUpdate.removeIf(it -> it.getA() == resourceId);
         resourcesToDelete.removeIf(it -> it == resourceId);
-        resourcesToRefresh.removeIf(it -> it == resourceId);
 
         resourcesToUpdate.add(new Tuple2<>(resourceId, updatedResource));
 

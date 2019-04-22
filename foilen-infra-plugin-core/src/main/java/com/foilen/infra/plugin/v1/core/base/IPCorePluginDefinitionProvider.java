@@ -9,7 +9,6 @@
  */
 package com.foilen.infra.plugin.v1.core.base;
 
-import com.foilen.infra.plugin.v1.core.context.CommonServicesContext;
 import com.foilen.infra.plugin.v1.core.plugin.IPPluginDefinitionProvider;
 import com.foilen.infra.plugin.v1.core.plugin.IPPluginDefinitionV1;
 
@@ -22,10 +21,6 @@ public class IPCorePluginDefinitionProvider implements IPPluginDefinitionProvide
         pluginDefinitionV1.addTranslations("/com/foilen/infra/plugin/v1/core/base/messages");
 
         return pluginDefinitionV1;
-    }
-
-    @Override
-    public void initialize(CommonServicesContext commonServicesContext) {
     }
 
 }

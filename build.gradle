@@ -4,12 +4,12 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE'
+    classpath 'io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE'
   }
 }
 
 plugins {
-  id "com.jfrog.bintray" version "1.7.3"
+  id "com.jfrog.bintray" version "1.8.4"
 }
 
 allprojects {
@@ -36,12 +36,11 @@ subprojects {
     jcenter()
   }
 
-  sourceCompatibility = 1.8
-  targetCompatibility = 1.8
+  sourceCompatibility = 1.11
 
   dependencyManagement {
     imports {
-      mavenBom 'io.spring.platform:platform-bom:Brussels-SR5'
+      mavenBom 'io.spring.platform:platform-bom:Cairo-SR8'
     }
   }
 
@@ -66,7 +65,26 @@ subprojects {
     archives sourcesJar
     archives javadocJar
   }
+  
+  test {
+    useJUnitPlatform()
+  }
 
 }
 
-task wrapper(type: Wrapper) { gradleVersion = '4.7' }
+bintray {
+  user = System.getenv('BINTRAY_USER')
+  key = System.getenv('BINTRAY_KEY')
+
+  publish = true
+
+  pkg {
+    repo = 'maven'
+    userOrg = 'foilen'
+    name = 'com.foilen:foilen-infra-plugin'
+    licenses = ['MIT']
+    vcsUrl = 'https://github.com/foilen/foilen-infra-plugin.git'
+  }
+
+  publications = []
+}

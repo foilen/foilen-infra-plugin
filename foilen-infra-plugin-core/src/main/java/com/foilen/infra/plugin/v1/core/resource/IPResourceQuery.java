@@ -250,6 +250,9 @@ public class IPResourceQuery<T extends IPResource> {
     public IPResourceQuery<T> propertyContains(String propertyName, Collection<?> value) {
         assertProperty(propertyName, value, SUPPORTS_CONTAINS, "contain");
         assertPropertyNotUsed(propertyName);
+        if (value == null) {
+            throw new SmallToolsException("Property [" + propertyName + "] cannot be queried with a null 'contains'");
+        }
         if (value.isEmpty()) {
             throw new SmallToolsException("Property [" + propertyName + "] cannot be queried with an empty 'contains'");
         }

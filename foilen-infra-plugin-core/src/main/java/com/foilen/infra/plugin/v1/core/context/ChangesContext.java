@@ -43,7 +43,7 @@ public class ChangesContext {
         this.resourceService = resourceService;
     }
 
-    public void clear() {
+    public ChangesContext clear() {
         resourcesToAdd.clear();
         resourcesToUpdate.clear();
         resourcesToDelete.clear();
@@ -52,6 +52,7 @@ public class ChangesContext {
         tagsToDelete.clear();
         linksToAdd.clear();
         linksToDelete.clear();
+        return this;
     }
 
     /**
@@ -107,18 +108,20 @@ public class ChangesContext {
                 !linksToAdd.isEmpty() || !linksToDelete.isEmpty();
     }
 
-    public void linkAdd(IPResource resourceFrom, String linkType, IPResource resourceTo) {
+    public ChangesContext linkAdd(IPResource resourceFrom, String linkType, IPResource resourceTo) {
         Tuple3<IPResource, String, IPResource> newTuple = new Tuple3<>(resourceFrom, linkType, resourceTo);
         linksToAdd.add(newTuple);
 
         linksClean(newTuple, linksToDelete);
+        return this;
     }
 
-    public void linkDelete(IPResource resourceFrom, String linkType, IPResource resourceTo) {
+    public ChangesContext linkDelete(IPResource resourceFrom, String linkType, IPResource resourceTo) {
         Tuple3<IPResource, String, IPResource> newTuple = new Tuple3<>(resourceFrom, linkType, resourceTo);
         linksToDelete.add(newTuple);
 
         linksClean(newTuple, linksToAdd);
+        return this;
     }
 
     protected void linksClean(Tuple3<IPResource, String, IPResource> newTuple, List<Tuple3<IPResource, String, IPResource>> linksList) {
@@ -129,13 +132,15 @@ public class ChangesContext {
         );
     }
 
-    public void resourceAdd(IPResource resource) {
+    public ChangesContext resourceAdd(IPResource resource) {
         resourcesToAdd.add(resource);
 
         // Check for conflicts
         if (resourceCheckInList(resource, resourcesToUpdate) || resourceCheckInListIds(resource, resourcesToDelete)) {
             throw new ResourcePrimaryKeyCollisionException();
         }
+
+        return this;
     }
 
     protected boolean resourceCheckInList(IPResource resource, List<Tuple2<Long, IPResource>> resources) {
@@ -151,7 +156,7 @@ public class ChangesContext {
                 .findAny().isPresent();
     }
 
-    public void resourceDelete(IPResource resource) {
+    public ChangesContext resourceDelete(IPResource resource) {
         Long internalId = resource.getInternalId();
         if (internalId == null) {
             Optional<IPResource> found = resourceService.resourceFindByPk(resource);
@@ -160,9 +165,11 @@ public class ChangesContext {
             }
         }
         resourceDelete(internalId);
+
+        return this;
     }
 
-    public void resourceDelete(Long resourceId) {
+    public ChangesContext resourceDelete(Long resourceId) {
         if (resourceId == null) {
             throw new IllegalUpdateException("Cannot delete a resource without id");
         }
@@ -176,29 +183,34 @@ public class ChangesContext {
         }
         resourcesToUpdate.removeIf(it -> it.getA() == resourceId);
 
+        return this;
     }
 
-    public void resourceRefresh(IPResource resource) {
+    public ChangesContext resourceRefresh(IPResource resource) {
         resourceRefresh(resource.getInternalId());
+        return this;
     }
 
-    public void resourceRefresh(Long resourceId) {
+    public ChangesContext resourceRefresh(Long resourceId) {
         if (resourceId == null) {
             throw new IllegalUpdateException("Cannot refresh a resource without id");
         }
 
         resourcesToRefresh.add(resourceId);
+        return this;
     }
 
-    public void resourceUpdate(IPResource resource) {
+    public ChangesContext resourceUpdate(IPResource resource) {
         resourceUpdate(resource.getInternalId(), resource);
+        return this;
     }
 
-    public void resourceUpdate(IPResource resource, IPResource updatedResource) {
+    public ChangesContext resourceUpdate(IPResource resource, IPResource updatedResource) {
         resourceUpdate(resource.getInternalId(), updatedResource);
+        return this;
     }
 
-    public void resourceUpdate(Long resourceId, IPResource updatedResource) {
+    public ChangesContext resourceUpdate(Long resourceId, IPResource updatedResource) {
         if (resourceId == null) {
             throw new IllegalUpdateException("Cannot modify a resource without id");
         }
@@ -208,21 +220,23 @@ public class ChangesContext {
         resourcesToDelete.removeIf(it -> it == resourceId);
 
         resourcesToUpdate.add(new Tuple2<>(resourceId, updatedResource));
-
+        return this;
     }
 
-    public void tagAdd(IPResource resource, String tagName) {
+    public ChangesContext tagAdd(IPResource resource, String tagName) {
         Tuple2<IPResource, String> newTuple = new Tuple2<>(resource, tagName);
         tagsToAdd.add(newTuple);
 
         tagsClean(newTuple, tagsToDelete);
+        return this;
     }
 
-    public void tagDelete(IPResource resource, String tagName) {
+    public ChangesContext tagDelete(IPResource resource, String tagName) {
         Tuple2<IPResource, String> newTuple = new Tuple2<>(resource, tagName);
         tagsToDelete.add(newTuple);
 
         tagsClean(newTuple, tagsToAdd);
+        return this;
     }
 
     protected void tagsClean(Tuple2<IPResource, String> newTuple, List<Tuple2<IPResource, String>> tagsList) {

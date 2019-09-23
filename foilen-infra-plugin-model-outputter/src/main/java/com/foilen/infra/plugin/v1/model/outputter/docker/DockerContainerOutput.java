@@ -9,6 +9,7 @@
  */
 package com.foilen.infra.plugin.v1.model.outputter.docker;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -225,6 +226,26 @@ public class DockerContainerOutput {
         return result.toString();
     }
 
+    private static void outputScript(String scriptName, String[] arguments) {
+        logger.info("Creating script {}", scriptName);
+
+        // Prepare content
+        StringBuilder content = new StringBuilder();
+        content.append("#!/bin/bash").append("\n");
+        content.append("set -e").append("\n");
+        content.append("RUN_PATH=\"$( cd \"$( dirname \"${BASH_SOURCE[0]}\" )\" && pwd )\"").append("\n");
+        content.append("cd $RUN_PATH").append("\n");
+        content.append("/usr/bin/docker ");
+        for (String argument : arguments) {
+            content.append(" '").append(argument).append("'");
+        }
+        content.append("\n");
+
+        // Output
+        FileTools.writeFile(content.toString(), new File(scriptName), "755");
+
+    }
+
     protected static String sanitize(String text) {
         text = text.replaceAll("'", "\\\\'");
         text = text.replaceAll("\\\"", "\\\\\"");
@@ -232,7 +253,7 @@ public class DockerContainerOutput {
     }
 
     /**
-     * Takes an application definition and creates the build directory.
+     * Takes an application definition, creates a directory with all the starting scripts and the build directory.
      *
      * @param applicationDefinition
      *            the application to build
@@ -241,17 +262,18 @@ public class DockerContainerOutput {
      */
     static public void toDockerBuildDirectory(IPApplicationDefinition applicationDefinition, DockerContainerOutputContext ctx) {
         String imageName = ctx.getImageName();
-        String buildDirectory = ctx.getBuildDirectory();
         if (Strings.isNullOrEmpty(imageName)) {
             throw new ModelException("The instance name is not specified");
         }
-        if (Strings.isNullOrEmpty(buildDirectory)) {
-            buildDirectory = Files.createTempDir().getAbsolutePath();
-            logger.info("[{}] The build directory is not specified. Will use a temporary one {}", imageName, buildDirectory);
+        String outputDirectory = ctx.getOutputDirectory();
+        if (Strings.isNullOrEmpty(outputDirectory)) {
+            outputDirectory = Files.createTempDir().getAbsolutePath();
+            logger.info("[{}] The build output is not specified. Will use a temporary one {}", imageName, outputDirectory);
         }
-        buildDirectory = DirectoryTools.pathTrailingSlash(buildDirectory);
-        ctx.setBuildDirectory(buildDirectory);
+        outputDirectory = DirectoryTools.pathTrailingSlash(outputDirectory);
+        ctx.setOutputDirectory(outputDirectory);
 
+        String buildDirectory = outputDirectory + "build/";
         logger.info("[{}] Preparing build folder {}", imageName, buildDirectory);
 
         List<Tuple2<String, String>> assetsPathAndContent = applicationDefinition.getAssetsPathAndContent();
@@ -297,6 +319,12 @@ public class DockerContainerOutput {
         logger.info("[{}] Creating DockerBuild file", imageName);
         String dockerFileContent = DockerContainerOutput.toDockerfile(applicationDefinition, ctx);
         FileTools.writeFile(dockerFileContent, buildDirectory + "Dockerfile");
+
+        logger.info("[{}] Creating scripts", imageName);
+        outputScript(outputDirectory + "build.sh", new String[] { "build", "-t", imageName, "build" });
+        outputScript(outputDirectory + "start-single-pass-attached.sh", toRunArgumentsSinglePassAttached(applicationDefinition, ctx));
+        outputScript(outputDirectory + "start-single-pass-detached.sh", toRunArgumentsSinglePassDetached(applicationDefinition, ctx, true));
+        outputScript(outputDirectory + "start-restart.sh", toRunArgumentsWithRestart(applicationDefinition, ctx));
 
         logger.info("[{}] Preparing build folder {} completed", imageName, buildDirectory);
 

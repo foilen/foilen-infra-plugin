@@ -12,13 +12,15 @@ package com.foilen.infra.plugin.v1.model.outputter.docker;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.foilen.smalltools.hash.HashSha256;
+
 public class DockerContainerOutputContext {
 
     private String imageName;
     private String containerName;
     private String hostName;
 
-    private String buildDirectory;
+    private String outputDirectory;
 
     // Networking
     private String networkName;
@@ -42,15 +44,11 @@ public class DockerContainerOutputContext {
         this.hostName = hostName;
     }
 
-    public DockerContainerOutputContext(String imageName, String containerName, String hostName, String buildDirectory) {
+    public DockerContainerOutputContext(String imageName, String containerName, String hostName, String outputDirectory) {
         this.imageName = imageName;
         this.containerName = containerName;
         this.hostName = hostName;
-        this.buildDirectory = buildDirectory;
-    }
-
-    public String getBuildDirectory() {
-        return buildDirectory;
+        this.outputDirectory = outputDirectory;
     }
 
     public String getContainerName() {
@@ -77,6 +75,10 @@ public class DockerContainerOutputContext {
         return networkName;
     }
 
+    public String getOutputDirectory() {
+        return outputDirectory;
+    }
+
     public Map<String, String> getRedirectIpByMachineContainerEndpoint() {
         return redirectIpByMachineContainerEndpoint;
     }
@@ -85,18 +87,14 @@ public class DockerContainerOutputContext {
         return redirectPortByMachineContainerEndpoint;
     }
 
-    public DockerContainerOutputContext setBuildDirectory(String buildDirectory) {
-        this.buildDirectory = buildDirectory;
-        return this;
-    }
-
     public DockerContainerOutputContext setContainerName(String containerName) {
         this.containerName = containerName;
         return this;
     }
 
-    public void setDockerLogsMaxSizeMB(Integer dockerLogsMaxSizeMB) {
+    public DockerContainerOutputContext setDockerLogsMaxSizeMB(Integer dockerLogsMaxSizeMB) {
         this.dockerLogsMaxSizeMB = dockerLogsMaxSizeMB;
+        return this;
     }
 
     public DockerContainerOutputContext setHostName(String hostName) {
@@ -119,12 +117,35 @@ public class DockerContainerOutputContext {
         return this;
     }
 
-    public void setRedirectIpByMachineContainerEndpoint(Map<String, String> redirectIpByMachineContainerEndpoint) {
-        this.redirectIpByMachineContainerEndpoint = redirectIpByMachineContainerEndpoint;
+    public DockerContainerOutputContext setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
+        return this;
     }
 
-    public void setRedirectPortByMachineContainerEndpoint(Map<String, Integer> redirectPortByMachineContainerEndpoint) {
+    public DockerContainerOutputContext setRedirectIpByMachineContainerEndpoint(Map<String, String> redirectIpByMachineContainerEndpoint) {
+        this.redirectIpByMachineContainerEndpoint = redirectIpByMachineContainerEndpoint;
+        return this;
+    }
+
+    public DockerContainerOutputContext setRedirectPortByMachineContainerEndpoint(Map<String, Integer> redirectPortByMachineContainerEndpoint) {
         this.redirectPortByMachineContainerEndpoint = redirectPortByMachineContainerEndpoint;
+        return this;
+    }
+
+    /**
+     * Gives a unique ID depending on the run command fields.
+     *
+     * @return the unique id
+     */
+    public String toContainerRunUniqueId() {
+        StringBuilder concat = new StringBuilder();
+        concat.append(imageName);
+        concat.append(containerName);
+        concat.append(hostName);
+        concat.append(networkName);
+        concat.append(networkIp);
+        concat.append(dockerLogsMaxSizeMB);
+        return HashSha256.hashString(concat.toString());
     }
 
 }

@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.EmailValidator;
 
-import com.foilen.infra.plugin.v1.core.common.DomainHelper;
 import com.foilen.smalltools.tools.DateTools;
 import com.foilen.smalltools.tools.StringTools;
 import com.foilen.smalltools.tuple.Tuple2;
@@ -219,7 +219,7 @@ public class CommonValidation {
     public static List<Tuple2<String, String>> validateDomainName(String fieldName, String fieldValue) {
         List<Tuple2<String, String>> errors = new ArrayList<>();
         if (fieldValue != null) {
-            if (!DomainHelper.isValidDomainName(fieldValue)) {
+            if (!DomainValidator.getInstance().isValid(fieldValue.replaceAll("_", "a"))) {
                 errors.add(new Tuple2<>(fieldName, "error.notDomain"));
             }
         }

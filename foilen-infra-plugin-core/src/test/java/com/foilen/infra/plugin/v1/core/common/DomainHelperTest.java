@@ -12,6 +12,7 @@ package com.foilen.infra.plugin.v1.core.common;
 import org.junit.Assert;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class DomainHelperTest {
 
     @Test

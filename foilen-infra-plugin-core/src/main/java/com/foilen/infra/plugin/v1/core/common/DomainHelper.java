@@ -18,6 +18,7 @@ import org.apache.commons.validator.routines.DomainValidator;
 
 import com.google.common.base.Joiner;
 
+@Deprecated // Since 2020-01-09
 public class DomainHelper {
 
     private static final Joiner dotJoiner = Joiner.on('.');

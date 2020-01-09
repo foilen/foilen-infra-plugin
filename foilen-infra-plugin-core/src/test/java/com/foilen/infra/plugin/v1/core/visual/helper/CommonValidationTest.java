@@ -204,6 +204,7 @@ public class CommonValidationTest {
         assertDomainName("www.example-is-good.com", true);
         assertDomainName("www.éxample.com", true);
 
+        assertDomainName("com", false);
         assertDomainName(".example.com", false);
         assertDomainName("www.exampl/e.com", false);
         assertDomainName("www..com", false);

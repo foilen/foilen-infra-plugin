@@ -80,7 +80,7 @@ public class IPResourceQuery<T extends IPResource> {
     }
 
     // On ID
-    private List<Long> idsIn;
+    private List<String> idsIn;
 
     private List<IPResourceDefinition> resourceDefinitions;
 
@@ -121,11 +121,11 @@ public class IPResourceQuery<T extends IPResource> {
         return this;
     }
 
-    public IPResourceQuery<T> addIdEquals(long... values) {
+    public IPResourceQuery<T> addIdEquals(String... values) {
         if (idsIn == null) {
             idsIn = new ArrayList<>();
         }
-        for (long value : values) {
+        for (String value : values) {
             idsIn.add(value);
         }
         return this;
@@ -174,7 +174,7 @@ public class IPResourceQuery<T extends IPResource> {
         return editorsIn;
     }
 
-    public List<Long> getIdsIn() {
+    public List<String> getIdsIn() {
         return idsIn;
     }
 
@@ -302,7 +302,7 @@ public class IPResourceQuery<T extends IPResource> {
         return this;
     }
 
-    public void setIdsIn(List<Long> idsIn) {
+    public void setIdsIn(List<String> idsIn) {
         this.idsIn = idsIn;
     }
 

@@ -26,7 +26,7 @@ import com.foilen.smalltools.tools.JsonTools;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractIPResource implements IPResource {
 
-    private Long internalId;
+    private String internalId;
     private String resourceEditorName;
     private SortedMap<String, String> meta = new TreeMap<>();
 
@@ -44,7 +44,7 @@ public abstract class AbstractIPResource implements IPResource {
 
     @JsonIgnore
     @Override
-    public Long getInternalId() {
+    public String getInternalId() {
         return internalId;
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractIPResource implements IPResource {
     }
 
     @Override
-    public void setInternalId(Long internalId) {
+    public void setInternalId(String internalId) {
         this.internalId = internalId;
     }
 

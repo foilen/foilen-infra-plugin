@@ -81,7 +81,7 @@ public class AbstractIPResourceTest {
         Assert.assertNotEquals(rB1.hashCode(), rC1.hashCode());
 
         // Ignore the ID
-        rA2.setInternalId(4L);
+        rA2.setInternalId("A");
         Assert.assertEquals(rA1, rA2);
         Assert.assertEquals(rA1.hashCode(), rA2.hashCode());
     }

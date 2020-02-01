@@ -225,12 +225,7 @@ public class CommonResourceLink {
                         });
             }
         } else {
-            Long linkedResourceId;
-            try {
-                linkedResourceId = Long.parseLong(value);
-            } catch (Exception e) {
-                throw new ProblemException("The link id is not numerical", e);
-            }
+            String linkedResourceId = value;
 
             Optional<? extends IPResource> linkedResourceOptional = servicesCtx.getResourceService().resourceFind( //
                     servicesCtx.getResourceService().createResourceQuery(toResourceType) //
@@ -299,12 +294,12 @@ public class CommonResourceLink {
             }
         } else {
             String[] valuesParts = values.split(",");
-            long[] linkedResourceIds = new long[valuesParts.length];
+            String[] linkedResourceIds = new String[valuesParts.length];
             try {
                 int idx = 0;
                 for (String valuePart : valuesParts) {
                     if (!Strings.isNullOrEmpty(valuePart)) {
-                        linkedResourceIds[idx++] = Long.parseLong(valuePart);
+                        linkedResourceIds[idx++] = valuePart;
                     }
                 }
             } catch (Exception e) {
@@ -373,12 +368,7 @@ public class CommonResourceLink {
                         });
             }
         } else {
-            Long linkedResourceId;
-            try {
-                linkedResourceId = Long.parseLong(value);
-            } catch (Exception e) {
-                throw new ProblemException("The link id is not numerical", e);
-            }
+            String linkedResourceId = value;
 
             Optional<? extends IPResource> linkedResourceOptional = servicesCtx.getResourceService().resourceFind( //
                     servicesCtx.getResourceService().createResourceQuery(fromResourceType) //
@@ -447,12 +437,12 @@ public class CommonResourceLink {
             }
         } else {
             String[] valuesParts = values.split(",");
-            long[] linkedResourceIds = new long[valuesParts.length];
+            String[] linkedResourceIds = new String[valuesParts.length];
             try {
                 int idx = 0;
                 for (String valuePart : valuesParts) {
                     if (!Strings.isNullOrEmpty(valuePart)) {
-                        linkedResourceIds[idx++] = Long.parseLong(valuePart);
+                        linkedResourceIds[idx++] = valuePart;
                     }
                 }
             } catch (Exception e) {

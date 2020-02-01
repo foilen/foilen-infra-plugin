@@ -35,7 +35,7 @@ public interface InternalChangeService {
      * @param toResourceId
      *            the to resource id
      */
-    void linkAdd(long fromResourceId, String linkType, long toResourceId);
+    void linkAdd(String fromResourceId, String linkType, String toResourceId);
 
     /**
      * Delete a link.
@@ -48,7 +48,7 @@ public interface InternalChangeService {
      *            the to resource id
      * @return true if existed and was removed ; false if already inexistent
      */
-    boolean linkDelete(long fromResourceId, String linkType, long toResourceId);
+    boolean linkDelete(String fromResourceId, String linkType, String toResourceId);
 
     /**
      * Check if a link exists.
@@ -61,7 +61,7 @@ public interface InternalChangeService {
      *            the to resource id
      * @return true if exists
      */
-    boolean linkExists(long fromResourceId, String linkType, long toResourceId);
+    boolean linkExists(String fromResourceId, String linkType, String toResourceId);
 
     /**
      * Add a new resource.
@@ -79,7 +79,7 @@ public interface InternalChangeService {
      *            the resource id
      * @return true if existed and was removed ; false if already inexistent
      */
-    boolean resourceDelete(long resourceId);
+    boolean resourceDelete(String resourceId);
 
     /**
      * Update a resource.
@@ -99,7 +99,7 @@ public interface InternalChangeService {
      * @param tagName
      *            the tag name
      */
-    void tagAdd(long resourceId, String tagName);
+    void tagAdd(String resourceId, String tagName);
 
     /**
      * Delete a tag.
@@ -110,7 +110,7 @@ public interface InternalChangeService {
      *            the tag name
      * @return true if existed and was removed ; false if already inexistent
      */
-    boolean tagDelete(long resourceId, String tagName);
+    boolean tagDelete(String resourceId, String tagName);
 
     /**
      * Check if a tag exists.
@@ -121,6 +121,6 @@ public interface InternalChangeService {
      *            the tag name
      * @return true if exists
      */
-    boolean tagExists(long resourceId, String tagName);
+    boolean tagExists(String resourceId, String tagName);
 
 }

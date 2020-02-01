@@ -23,6 +23,7 @@ import com.foilen.infra.plugin.v1.core.eventhandler.ActionHandler;
 import com.foilen.infra.plugin.v1.model.resource.IPResource;
 import com.foilen.smalltools.tools.AbstractBasics;
 import com.foilen.smalltools.tools.CollectionsTools;
+import com.foilen.smalltools.tools.StringTools;
 import com.foilen.smalltools.tuple.Tuple2;
 import com.foilen.smalltools.tuple.Tuple3;
 
@@ -281,7 +282,7 @@ public class ChangesInTransactionContext extends AbstractBasics {
 
     private void updateOrAddUpdatedResource(List<UpdatedResource> list, IPResource previousResource, IPResource updatedResource) {
         // Get the entry if already present
-        Optional<UpdatedResource> existing = list.stream().filter(it -> Long.compare(it.getPrevious().getInternalId(), previousResource.getInternalId()) == 0).findAny();
+        Optional<UpdatedResource> existing = list.stream().filter(it -> StringTools.safeComparisonNullFirst(it.getPrevious().getInternalId(), previousResource.getInternalId()) == 0).findAny();
         if (existing.isPresent()) {
             // Update
             existing.get().setNext(updatedResource);

@@ -25,7 +25,7 @@ public interface IPResource {
      *
      * @return the id
      */
-    Long getInternalId();
+    String getInternalId();
 
     /**
      * Some meta information.
@@ -63,7 +63,7 @@ public interface IPResource {
      * @param internalId
      *            the id
      */
-    void setInternalId(Long internalId);
+    void setInternalId(String internalId);
 
     /**
      * Some meta information.

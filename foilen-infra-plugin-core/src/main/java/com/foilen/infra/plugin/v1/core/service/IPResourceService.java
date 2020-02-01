@@ -109,7 +109,7 @@ public interface IPResourceService {
      *            the "from" resource id
      * @return all the linkType -&gt; "to" resources
      */
-    List<Tuple2<String, ? extends IPResource>> linkFindAllByFromResource(long fromResourceId);
+    List<Tuple2<String, ? extends IPResource>> linkFindAllByFromResource(String fromResourceId);
 
     /**
      * Find all the "to" resources.
@@ -179,7 +179,7 @@ public interface IPResourceService {
      *            the "to" resource id
      * @return all the "from" resources
      */
-    List<Tuple2<? extends IPResource, String>> linkFindAllByToResource(long toResourceId);
+    List<Tuple2<? extends IPResource, String>> linkFindAllByToResource(String toResourceId);
 
     /**
      * Find the links that are "from" or "to" the resource.
@@ -197,7 +197,7 @@ public interface IPResourceService {
      *            the resource id
      * @return the links
      */
-    List<Tuple3<IPResource, String, IPResource>> linkFindAllRelatedByResource(Long internalResourceId);
+    List<Tuple3<IPResource, String, IPResource>> linkFindAllRelatedByResource(String internalResourceId);
 
     /**
      * Tells if 2 resources has their current primary keys equals.
@@ -225,7 +225,7 @@ public interface IPResourceService {
      */
     <T extends IPResource> Optional<T> resourceFind(IPResourceQuery<T> query);
 
-    Optional<IPResource> resourceFind(long internalResourceId);
+    Optional<IPResource> resourceFind(String internalResourceId);
 
     /**
      * Find all the resources that match the query.

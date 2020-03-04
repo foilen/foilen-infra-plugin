@@ -9,7 +9,10 @@
  */
 package com.foilen.infra.plugin.v1.core.service.internal;
 
+import java.util.List;
+
 import com.foilen.infra.plugin.v1.core.context.ChangesContext;
+import com.foilen.infra.plugin.v1.core.eventhandler.changes.ChangeExecutionHook;
 import com.foilen.infra.plugin.v1.model.resource.IPResource;
 
 /**
@@ -24,6 +27,16 @@ public interface InternalChangeService {
      *            the changes
      */
     void changesExecute(ChangesContext changes);
+
+    /**
+     * Execute the changes and clear the changes context.
+     *
+     * @param changes
+     *            the changes
+     * @param extraChangeExecutionHooks
+     *            some hooks to add
+     */
+    void changesExecute(ChangesContext changes, List<ChangeExecutionHook> extraChangeExecutionHooks);
 
     /**
      * Add a link.

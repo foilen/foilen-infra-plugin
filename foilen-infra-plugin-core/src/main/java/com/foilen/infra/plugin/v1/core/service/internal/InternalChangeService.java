@@ -38,6 +38,8 @@ public interface InternalChangeService {
      */
     void changesExecute(ChangesContext changes, List<ChangeExecutionHook> extraChangeExecutionHooks);
 
+    List<ChangeExecutionHook> getDefaultChangeExecutionHooks();
+
     /**
      * Add a link.
      *
@@ -103,6 +105,10 @@ public interface InternalChangeService {
      *            the new values
      */
     void resourceUpdate(IPResource previousResource, IPResource updatedResource);
+
+    void setDefaultChangeExecutionHooks(List<ChangeExecutionHook> changeExecutionHooks);
+
+    void setInfiniteLoopTimeoutInMs(long infiniteLoopTimeoutInMs);
 
     /**
      * Add a tag.

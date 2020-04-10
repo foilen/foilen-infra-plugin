@@ -12,11 +12,10 @@ package com.foilen.infra.plugin.v1.model.base;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.foilen.smalltools.JavaEnvironmentValues;
-import com.foilen.smalltools.tools.AbstractBasics;
 
 @JsonPropertyOrder(alphabetic = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IPApplicationDefinitionPortRedirect extends AbstractBasics {
+public class IPApplicationDefinitionPortRedirect {
 
     public static final String LOCAL_MACHINE = "localhost";
 
@@ -33,6 +32,49 @@ public class IPApplicationDefinitionPortRedirect extends AbstractBasics {
         this.toMachine = toMachine;
         this.toContainerName = toContainerName;
         this.toEndpoint = toEndpoint;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        IPApplicationDefinitionPortRedirect other = (IPApplicationDefinitionPortRedirect) obj;
+        if (localPort == null) {
+            if (other.localPort != null) {
+                return false;
+            }
+        } else if (!localPort.equals(other.localPort)) {
+            return false;
+        }
+        if (toContainerName == null) {
+            if (other.toContainerName != null) {
+                return false;
+            }
+        } else if (!toContainerName.equals(other.toContainerName)) {
+            return false;
+        }
+        if (toEndpoint == null) {
+            if (other.toEndpoint != null) {
+                return false;
+            }
+        } else if (!toEndpoint.equals(other.toEndpoint)) {
+            return false;
+        }
+        if (toMachine == null) {
+            if (other.toMachine != null) {
+                return false;
+            }
+        } else if (!toMachine.equals(other.toMachine)) {
+            return false;
+        }
+        return true;
     }
 
     public Integer getLocalPort() {
@@ -55,6 +97,17 @@ public class IPApplicationDefinitionPortRedirect extends AbstractBasics {
         return toMachine;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((localPort == null) ? 0 : localPort.hashCode());
+        result = prime * result + ((toContainerName == null) ? 0 : toContainerName.hashCode());
+        result = prime * result + ((toEndpoint == null) ? 0 : toEndpoint.hashCode());
+        result = prime * result + ((toMachine == null) ? 0 : toMachine.hashCode());
+        return result;
+    }
+
     public boolean isToLocalMachine() {
         return IPApplicationDefinitionPortRedirect.LOCAL_MACHINE.equals(toMachine) || JavaEnvironmentValues.getHostName().equals(toMachine);
     }
@@ -73,6 +126,21 @@ public class IPApplicationDefinitionPortRedirect extends AbstractBasics {
 
     public void setToMachine(String toMachine) {
         this.toMachine = toMachine;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IPApplicationDefinitionPortRedirect [localPort=");
+        builder.append(localPort);
+        builder.append(", toMachine=");
+        builder.append(toMachine);
+        builder.append(", toContainerName=");
+        builder.append(toContainerName);
+        builder.append(", toEndpoint=");
+        builder.append(toEndpoint);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

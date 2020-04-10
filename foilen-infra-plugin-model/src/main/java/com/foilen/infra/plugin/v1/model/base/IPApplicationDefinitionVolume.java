@@ -11,11 +11,10 @@ package com.foilen.infra.plugin.v1.model.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.foilen.smalltools.tools.AbstractBasics;
 
 @JsonPropertyOrder(alphabetic = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IPApplicationDefinitionVolume extends AbstractBasics {
+public class IPApplicationDefinitionVolume {
 
     private String hostFolder;
     private String containerFsFolder;
@@ -101,6 +100,59 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
         this.readOnly = readOnly;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        IPApplicationDefinitionVolume other = (IPApplicationDefinitionVolume) obj;
+        if (containerFsFolder == null) {
+            if (other.containerFsFolder != null) {
+                return false;
+            }
+        } else if (!containerFsFolder.equals(other.containerFsFolder)) {
+            return false;
+        }
+        if (groupId == null) {
+            if (other.groupId != null) {
+                return false;
+            }
+        } else if (!groupId.equals(other.groupId)) {
+            return false;
+        }
+        if (hostFolder == null) {
+            if (other.hostFolder != null) {
+                return false;
+            }
+        } else if (!hostFolder.equals(other.hostFolder)) {
+            return false;
+        }
+        if (ownerId == null) {
+            if (other.ownerId != null) {
+                return false;
+            }
+        } else if (!ownerId.equals(other.ownerId)) {
+            return false;
+        }
+        if (permissions == null) {
+            if (other.permissions != null) {
+                return false;
+            }
+        } else if (!permissions.equals(other.permissions)) {
+            return false;
+        }
+        if (readOnly != other.readOnly) {
+            return false;
+        }
+        return true;
+    }
+
     public String getContainerFsFolder() {
         return containerFsFolder;
     }
@@ -119,6 +171,19 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
 
     public String getPermissions() {
         return permissions;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((containerFsFolder == null) ? 0 : containerFsFolder.hashCode());
+        result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+        result = prime * result + ((hostFolder == null) ? 0 : hostFolder.hashCode());
+        result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
+        result = prime * result + ((permissions == null) ? 0 : permissions.hashCode());
+        result = prime * result + (readOnly ? 1231 : 1237);
+        return result;
     }
 
     public boolean isReadOnly() {
@@ -147,6 +212,25 @@ public class IPApplicationDefinitionVolume extends AbstractBasics {
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("IPApplicationDefinitionVolume [hostFolder=");
+        builder.append(hostFolder);
+        builder.append(", containerFsFolder=");
+        builder.append(containerFsFolder);
+        builder.append(", ownerId=");
+        builder.append(ownerId);
+        builder.append(", groupId=");
+        builder.append(groupId);
+        builder.append(", permissions=");
+        builder.append(permissions);
+        builder.append(", readOnly=");
+        builder.append(readOnly);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

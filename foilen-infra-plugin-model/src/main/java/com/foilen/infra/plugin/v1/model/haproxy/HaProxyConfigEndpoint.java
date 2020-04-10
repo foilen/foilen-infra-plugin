@@ -9,9 +9,7 @@
  */
 package com.foilen.infra.plugin.v1.model.haproxy;
 
-import com.foilen.smalltools.tools.AbstractBasics;
-
-public class HaProxyConfigEndpoint extends AbstractBasics implements Comparable<HaProxyConfigEndpoint> {
+public class HaProxyConfigEndpoint implements Comparable<HaProxyConfigEndpoint> {
 
     private String hostPort;
     private boolean isSsl;
@@ -54,8 +52,42 @@ public class HaProxyConfigEndpoint extends AbstractBasics implements Comparable<
         return 1;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        HaProxyConfigEndpoint other = (HaProxyConfigEndpoint) obj;
+        if (hostPort == null) {
+            if (other.hostPort != null) {
+                return false;
+            }
+        } else if (!hostPort.equals(other.hostPort)) {
+            return false;
+        }
+        if (isSsl != other.isSsl) {
+            return false;
+        }
+        return true;
+    }
+
     public String getHostPort() {
         return hostPort;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((hostPort == null) ? 0 : hostPort.hashCode());
+        result = prime * result + (isSsl ? 1231 : 1237);
+        return result;
     }
 
     public boolean isSsl() {
@@ -70,6 +102,17 @@ public class HaProxyConfigEndpoint extends AbstractBasics implements Comparable<
     public HaProxyConfigEndpoint setSsl(boolean isSsl) {
         this.isSsl = isSsl;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("HaProxyConfigEndpoint [hostPort=");
+        builder.append(hostPort);
+        builder.append(", isSsl=");
+        builder.append(isSsl);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

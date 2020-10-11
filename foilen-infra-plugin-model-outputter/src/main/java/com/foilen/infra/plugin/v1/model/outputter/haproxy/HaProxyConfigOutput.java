@@ -212,7 +212,7 @@ public class HaProxyConfigOutput {
 
     public static String toRun(HaProxyConfig haProxyConfig, String configFilePath) {
         StringBuilder command = new StringBuilder();
-        command.append("/usr/sbin/haproxy -f ");
+        command.append(haProxyConfig.getCommand() + " -f ");
         command.append(configFilePath);
 
         String pidfile = haProxyConfig.getPidfile();

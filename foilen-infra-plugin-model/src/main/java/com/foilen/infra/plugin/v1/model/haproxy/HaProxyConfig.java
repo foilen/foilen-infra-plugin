@@ -18,6 +18,8 @@ import com.foilen.smalltools.tuple.Tuple2;
 
 public class HaProxyConfig {
 
+    private String command = "/usr/sbin/haproxy";
+
     private boolean daemon = false;
 
     private String chroot = null;
@@ -86,6 +88,10 @@ public class HaProxyConfig {
         return chroot;
     }
 
+    public String getCommand() {
+        return command;
+    }
+
     public String getGroup() {
         return group;
     }
@@ -124,6 +130,10 @@ public class HaProxyConfig {
 
     public void setChroot(String chroot) {
         this.chroot = chroot;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 
     public void setDaemon(boolean daemon) {

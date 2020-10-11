@@ -9,9 +9,12 @@
  */
 package com.foilen.infra.plugin.v1.model.outputter.docker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionVolume;
 import com.foilen.smalltools.hash.HashSha256;
 
 public class DockerContainerOutputContext {
@@ -32,6 +35,11 @@ public class DockerContainerOutputContext {
     // Redirection details
     private Map<String, Integer> redirectPortByMachineContainerEndpoint = new HashMap<>();
     private Map<String, String> redirectIpByMachineContainerEndpoint = new HashMap<>();
+
+    // Infra
+    private String haProxyCommand;
+    private String servicesExecuteCommand = "/usr/sbin/services-execution";
+    private List<IPApplicationDefinitionVolume> infraVolumes = new ArrayList<>();
 
     public DockerContainerOutputContext(String imageName, String containerName) {
         this.imageName = imageName;
@@ -59,12 +67,20 @@ public class DockerContainerOutputContext {
         return dockerLogsMaxSizeMB;
     }
 
+    public String getHaProxyCommand() {
+        return haProxyCommand;
+    }
+
     public String getHostName() {
         return hostName;
     }
 
     public String getImageName() {
         return imageName;
+    }
+
+    public List<IPApplicationDefinitionVolume> getInfraVolumes() {
+        return infraVolumes;
     }
 
     public String getNetworkIp() {
@@ -87,6 +103,10 @@ public class DockerContainerOutputContext {
         return redirectPortByMachineContainerEndpoint;
     }
 
+    public String getServicesExecuteCommand() {
+        return servicesExecuteCommand;
+    }
+
     public DockerContainerOutputContext setContainerName(String containerName) {
         this.containerName = containerName;
         return this;
@@ -94,6 +114,11 @@ public class DockerContainerOutputContext {
 
     public DockerContainerOutputContext setDockerLogsMaxSizeMB(Integer dockerLogsMaxSizeMB) {
         this.dockerLogsMaxSizeMB = dockerLogsMaxSizeMB;
+        return this;
+    }
+
+    public DockerContainerOutputContext setHaProxyCommand(String haProxyCommand) {
+        this.haProxyCommand = haProxyCommand;
         return this;
     }
 
@@ -105,6 +130,10 @@ public class DockerContainerOutputContext {
     public DockerContainerOutputContext setImageName(String imageName) {
         this.imageName = imageName;
         return this;
+    }
+
+    public void setInfraVolumes(List<IPApplicationDefinitionVolume> infraVolumes) {
+        this.infraVolumes = infraVolumes;
     }
 
     public DockerContainerOutputContext setNetworkIp(String networkIp) {
@@ -129,6 +158,11 @@ public class DockerContainerOutputContext {
 
     public DockerContainerOutputContext setRedirectPortByMachineContainerEndpoint(Map<String, Integer> redirectPortByMachineContainerEndpoint) {
         this.redirectPortByMachineContainerEndpoint = redirectPortByMachineContainerEndpoint;
+        return this;
+    }
+
+    public DockerContainerOutputContext setServicesExecuteCommand(String servicesExecuteCommand) {
+        this.servicesExecuteCommand = servicesExecuteCommand;
         return this;
     }
 

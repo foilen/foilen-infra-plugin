@@ -10,14 +10,8 @@
       "a" : "_infra/program__main.sh",
       "b" : "#!/bin/bash\n\n/usr/sbin/haproxy -f /volumes/config/haproxy\nEXIT_CODE=$?\n\n# Save the exit code if not already present\nif [ ! -f /_infra/exitcode ]; then\n  echo $EXIT_CODE > /_infra/exitcode\nfi\n"
     }, {
-      "a" : "_infra/supervisord_users.txt",
-      "b" : "s_other:0\ns__main:10001\n"
-    }, {
-      "a" : "_infra/startSupervisord.sh",
-      "b" : "#!/bin/bash\n\n# Delete old exit code if any\nrm -f /_infra/exitcode\n\n# Create any missing user in /etc/passwd\nif [ -f /_infra/supervisord_users.txt ]; then\n\tfor i in $(cat /_infra/supervisord_users.txt); do\n\t\tUSER_NAME=$(echo $i | cut -d':' -f1)\n\t\tUSER_ID=$(echo $i | cut -d':' -f2)\n\t\tif id $USER_ID ; then\n\t\t\techo User with id $USER_ID already exists\n\t\telse\n\t\t\techo User with id $USER_ID needs to be created\n\t\t\tuseradd --uid $USER_ID $USER_NAME\n\tfi\n\tdone\nfi\n\n# Start supervisor and keep the pid\n/usr/bin/supervisord -c /_infra/supervisord.conf &\nSUPERVISORD_PID=$!\n\n# Wait for the end\nwhile [ -d /proc/$SUPERVISORD_PID ]\ndo\n\n  # Return the exit code if present\n  if [ -f /_infra/exitcode ]; then\n    exit $(cat /_infra/exitcode)\n  fi\n\n  sleep 1\ndone\n\n# Return the exit code if present\nif [ -f /_infra/exitcode ]; then\n  exit $(cat /_infra/exitcode)\nfi\n"
-    }, {
-      "a" : "_infra/supervisord.conf",
-      "b" : "[supervisord]\nnodaemon=true\n\n[program:other]\nuser=0\nstartretries=0\nautorestart=false\nredirect_stderr=true\nstdout_logfile=/var/log/supervisor/other.log\ncommand=/_infra/program_other.sh\n\n[program:_main]\nuser=10001\nstartretries=0\nautorestart=false\nredirect_stderr=true\nstdout_logfile=/var/log/supervisor/_main.log\ncommand=/_infra/program__main.sh\n\n"
+      "a" : "_infra/services.json",
+      "b" : "{\n  \"services\" : [ {\n    \"userID\" : 0,\n    \"groupID\" : 0,\n    \"workingDirectory\" : \"/tmp\",\n    \"command\" : \"/_infra/program_other.sh\"\n  }, {\n    \"userID\" : 10001,\n    \"groupID\" : 10001,\n    \"workingDirectory\" : \"/tmp\",\n    \"command\" : \"/_infra/program__main.sh\"\n  } ]\n}"
     }, {
       "a" : "_infra/fixUserPermissions.sh",
       "b" : "#!/bin/bash\n\nset -e\n\nUSER_NAME=$1\nGROUP_NAME=$2\nNEW_USER_ID=$3\nNEW_GROUP_ID=$4\n\nFIX_CONTAINER_USER_ID=$(id -u $USER_NAME)\nFIX_CONTAINER_GROUP_ID=$(id -g $GROUP_NAME)\n\nusermod -u $NEW_USER_ID $USER_NAME -o\ngroupmod -g $NEW_GROUP_ID $GROUP_NAME -o\n\ncd /\nfor rootDir in $(ls); do\n\tif [ \"$rootDir\" == \"boot\" ]; then\n\t\tcontinue\n\tfi\n\tif [ \"$rootDir\" == \"dev\" ]; then\n\t\tcontinue\n\tfi\n\tif [ \"$rootDir\" == \"proc\" ]; then\n\t\tcontinue\n\tfi\n\tif [ \"$rootDir\" == \"sys\" ]; then\n\t\tcontinue\n\tfi\n\t\n\tfind $rootDir -uid $FIX_CONTAINER_USER_ID -exec chown $USER_NAME {} \\;\n\tfind $rootDir -gid $FIX_CONTAINER_GROUP_ID -exec chgrp $GROUP_NAME {} \\;\ndone\n"
@@ -43,7 +37,7 @@
     "step" : "chmod -R 777 /_infra/",
     "type" : "COMMAND"
   } ],
-  "command" : "/_infra/startSupervisord.sh",
+  "command" : "/usr/sbin/services-execution /_infra/services.json",
   "containerUsersToChangeId" : [ {
     "a" : "containerUser1",
     "b" : 1000

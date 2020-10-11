@@ -30,11 +30,12 @@ import com.foilen.infra.plugin.v1.model.base.IPApplicationDefinitionVolume;
 import com.foilen.infra.plugin.v1.model.haproxy.HaProxyConfig;
 import com.foilen.infra.plugin.v1.model.outputter.ModelException;
 import com.foilen.infra.plugin.v1.model.outputter.haproxy.HaProxyConfigOutput;
+import com.foilen.infra.plugin.v1.model.outputter.servicesExecution.ServicesExecutionConfig;
+import com.foilen.infra.plugin.v1.model.outputter.servicesExecution.ServicesExecutionServiceConfig;
 import com.foilen.smalltools.tools.DirectoryTools;
 import com.foilen.smalltools.tools.FileTools;
 import com.foilen.smalltools.tools.FreemarkerTools;
 import com.foilen.smalltools.tools.JsonTools;
-import com.foilen.smalltools.tools.ResourceTools;
 import com.foilen.smalltools.tuple.Tuple2;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
@@ -62,7 +63,7 @@ public class DockerContainerOutput {
             return new Tuple2<>(it, false);
         }).collect(Collectors.toList());
 
-        // Use a single assetsBundle for (supervisor if more than 1 service ; if infra)
+        // Use a single assetsBundle for (services execution if more than 1 service ; if infra)
         List<IPApplicationDefinitionPortRedirect> portsRedirect = transformedApplicationDefinition.getPortsRedirect();
         IPApplicationDefinitionAssetsBundle assetsBundle = transformedApplicationDefinition.addAssetsBundle();
         boolean infraChmodAdded = false;
@@ -73,6 +74,12 @@ public class DockerContainerOutput {
             if (transformedApplicationDefinition.getCommand() == null && services.isEmpty()) {
                 throw new ModelException("We need to move the current command in a service, but you are using the default image's command which we do not know. Please specify the command name");
             }
+
+            // Add volume for infra-apps
+            ctx.getInfraVolumes().forEach(volume -> {
+                logger.info("[{}] Adding infra volume {}", imageName, volume);
+                transformedApplicationDefinition.addVolume(volume);
+            });
 
             // Move the current command to a service
             Long initialRunAs = transformedApplicationDefinition.getRunAs();
@@ -93,6 +100,9 @@ public class DockerContainerOutput {
             if (!portsRedirect.isEmpty()) {
 
                 HaProxyConfig haProxyConfig = new HaProxyConfig();
+                if (ctx.getHaProxyCommand() != null) {
+                    haProxyConfig.setCommand(ctx.getHaProxyCommand());
+                }
                 haProxyConfig.setUser(null);
                 haProxyConfig.setGroup(null);
                 haProxyConfig.setTimeoutTunnelMs(10L * 60L * 1000L); // 10 minutes
@@ -132,27 +142,22 @@ public class DockerContainerOutput {
                 }
             }
 
-            // Supervisor command & user list
-            StringBuilder supervisorUsersToInstall = new StringBuilder();
-            StringBuilder supervisorConfigContent = new StringBuilder();
-            supervisorConfigContent.append("[supervisord]\n");
-            supervisorConfigContent.append("nodaemon=true\n\n");
-
+            // Services command
+            ServicesExecutionConfig servicesExecutionConfig = new ServicesExecutionConfig();
             for (Tuple2<IPApplicationDefinitionService, Boolean> serviceAndIsInfra : serviceAndIsInfras) {
                 IPApplicationDefinitionService service = serviceAndIsInfra.getA();
-                supervisorConfigContent.append("[program:").append(service.getName()).append("]\n");
+                ServicesExecutionServiceConfig serviceConfig = new ServicesExecutionServiceConfig();
+                servicesExecutionConfig.getServices().add(serviceConfig);
                 if (service.getRunAs() != null) {
-                    supervisorConfigContent.append("user=").append(service.getRunAs()).append("\n");
-                    supervisorUsersToInstall.append("s_").append(service.getName()).append(":").append(service.getRunAs()).append("\n");
+                    serviceConfig.setUserID(service.getRunAs());
+                    serviceConfig.setGroupID(service.getRunAs());
                 }
-                if (service.getWorkingDirectory() != null) {
-                    supervisorConfigContent.append("directory=").append(service.getWorkingDirectory()).append("\n");
+                if (service.getWorkingDirectory() == null) {
+                    serviceConfig.setWorkingDirectory("/tmp");
+                } else {
+                    serviceConfig.setWorkingDirectory(service.getWorkingDirectory());
                 }
-                supervisorConfigContent.append("startretries=0\n");
-                supervisorConfigContent.append("autorestart=false\n");
-                supervisorConfigContent.append("redirect_stderr=true\n");
-                supervisorConfigContent.append("stdout_logfile=/var/log/supervisor/").append(service.getName()).append(".log\n");
-                supervisorConfigContent.append("command=/_infra/program_").append(service.getName()).append(".sh\n\n");
+                serviceConfig.setCommand("/_infra/program_" + service.getName() + ".sh");
 
                 Map<String, Object> model = new HashMap<>();
                 model.put("portsRedirect", portsRedirect);
@@ -168,12 +173,8 @@ public class DockerContainerOutput {
                 assetsBundle.addAssetContent("_infra/program_" + service.getName() + ".sh", serviceScriptContent);
             }
 
-            assetsBundle.addAssetContent("_infra/supervisord_users.txt", supervisorUsersToInstall.toString());
-
             // Main script
-            String mainScriptContent = ResourceTools.getResourceAsString("startSupervisord.sh", DockerContainerOutput.class);
-            assetsBundle.addAssetContent("_infra/startSupervisord.sh", mainScriptContent);
-            transformedApplicationDefinition.setCommand("/_infra/startSupervisord.sh");
+            transformedApplicationDefinition.setCommand(ctx.getServicesExecuteCommand() + " /_infra/services.json");
             transformedApplicationDefinition.setWorkingDirectory("/_infra/");
             transformedApplicationDefinition.setRunAs(0L);
 
@@ -182,7 +183,7 @@ public class DockerContainerOutput {
                 infraChmodAdded = true;
             }
 
-            assetsBundle.addAssetContent("_infra/supervisord.conf", supervisorConfigContent.toString());
+            assetsBundle.addAssetContent("_infra/services.json", JsonTools.prettyPrint(servicesExecutionConfig));
 
         } else {
             logger.info("[{}] Single command and no infra", imageName);

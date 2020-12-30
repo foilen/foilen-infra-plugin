@@ -4,11 +4,11 @@ dependencies {
 
   compile "org.slf4j:slf4j-api"
   
-  testCompile "org.freemarker:freemarker:2.3.23"
+  testCompile "org.freemarker:freemarker"
   testCompile "org.slf4j:slf4j-api"
-  testCompileOnly 'junit:junit:4.12'
-  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-  testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junitVersion"
+  testCompileOnly 'junit:junit'
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 
 }
 

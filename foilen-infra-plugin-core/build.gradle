@@ -12,9 +12,9 @@ dependencies {
   compile "org.slf4j:slf4j-api"
   compile "org.springframework:spring-beans"
 
-  testCompileOnly 'junit:junit:4.12'
-  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-  testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junitVersion"
+  testCompileOnly 'junit:junit'
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 
 }
 

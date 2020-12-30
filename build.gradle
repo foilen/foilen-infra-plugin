@@ -3,13 +3,11 @@ buildscript {
     mavenLocal()
     jcenter()
   }
-  dependencies {
-    classpath 'io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE'
-  }
 }
 
 plugins {
-  id "com.jfrog.bintray" version "1.8.4"
+  id "com.jfrog.bintray" version "$bintrayVersion"
+  id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
 }
 
 allprojects {
@@ -40,7 +38,7 @@ subprojects {
 
   dependencyManagement {
     imports {
-      mavenBom 'io.spring.platform:platform-bom:Cairo-SR8'
+      mavenBom "org.springframework.boot:spring-boot-starter-parent:$springBootVersion"
     }
   }
 

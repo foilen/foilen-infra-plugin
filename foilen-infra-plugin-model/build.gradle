@@ -2,13 +2,13 @@ dependencies {
 
   compile "com.fasterxml.jackson.core:jackson-databind"
   compile "com.foilen:jl-smalltools:$smalltoolsVersion"
-  compile "com.google.guava:guava"
+  compile "com.google.guava:guava:$guavaVersion"
   compile "org.apache.commons:commons-lang3"
-  compile 'org.slf4j:slf4j-api:1.7.25'
+  compile 'org.slf4j:slf4j-api'
 
-  testCompileOnly 'junit:junit:4.12'
-  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-  testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junitVersion"
+  testCompileOnly 'junit:junit'
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 
 }
 

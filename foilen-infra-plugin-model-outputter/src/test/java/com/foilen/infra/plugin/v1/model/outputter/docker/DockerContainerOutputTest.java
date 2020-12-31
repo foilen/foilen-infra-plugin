@@ -95,6 +95,16 @@ public class DockerContainerOutputTest {
     }
 
     @Test
+    public void testToDockerfile_workdirSpace() {
+
+        applicationDefinition.setWorkingDirectory("/tmp/with space/here");
+
+        String actual = DockerContainerOutput.toDockerfile(applicationDefinition, ctx);
+        String expected = ResourceTools.getResourceAsString("DockerContainerOutputTest-testToDockerfile_workdirSpace-expected.txt", this.getClass());
+        AssertTools.assertIgnoreLineFeed(expected, actual);
+    }
+
+    @Test
     public void testToRunArgumentsSinglePassAttached() {
         String expected = "run -i --rm --volume /tmp/docker/config:/volumes/config --volume /tmp/docker/etc:/volumes/etc:ro --publish 80:8080 --publish 443:8443 -u 10001 --name Uroot_Stest --hostname Uroot_Stest Uroot_Stest /usr/sbin/haproxy -f /volumes/config/haproxy";
         String actual = joiner.join(DockerContainerOutput.toRunArgumentsSinglePassAttached(applicationDefinition, ctx));

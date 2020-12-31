@@ -30,6 +30,7 @@ public class CommonValidation {
 
     private static Pattern alphaNumLowerValidationRegex = Pattern.compile("[a-z0-9\\.\\_\\-]+");
     private static Pattern alphaNumLowerAndUpperValidationRegex = Pattern.compile("[a-zA-Z0-9\\.\\_\\-]+");
+    private static Pattern pathValidationRegex = Pattern.compile("[a-zA-Z0-9\\.\\_\\-\\/\\ ]+");
 
     private static int count(String hayStash, char needle) {
         int count = 0;
@@ -404,6 +405,25 @@ public class CommonValidation {
         return errors;
     }
 
+    public static List<Tuple2<String, String>> validatePath(Map<String, String> formValues, String... fieldNames) {
+        List<Tuple2<String, String>> errors = new ArrayList<>();
+        for (String fieldName : CommonFieldHelper.getAllFieldNames(formValues, fieldNames)) {
+            String fieldValue = formValues.get(fieldName);
+            errors.addAll(validatePath(fieldName, fieldValue));
+        }
+        return errors;
+    }
+
+    public static List<Tuple2<String, String>> validatePath(String fieldName, String fieldValue) {
+        List<Tuple2<String, String>> errors = new ArrayList<>();
+        if (!Strings.isNullOrEmpty(fieldValue)) {
+            if (!pathValidationRegex.matcher(fieldValue).matches()) {
+                errors.add(new Tuple2<>(fieldName, "error.notPath"));
+            }
+        }
+        return errors;
+    }
+
     public static List<Tuple2<String, String>> validateSamePassword(Map<String, String> formValues, String fieldPassword, String fieldPasswordConf) {
 
         List<Tuple2<String, String>> errors = new ArrayList<>();
@@ -442,6 +462,13 @@ public class CommonValidation {
             }
         }
         return errors;
+    }
+
+    public static boolean validPath(String fieldValue) {
+        if (!Strings.isNullOrEmpty(fieldValue)) {
+            return pathValidationRegex.matcher(fieldValue).matches();
+        }
+        return true;
     }
 
     private CommonValidation() {

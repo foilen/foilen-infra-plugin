@@ -121,11 +121,22 @@ public class CommonValidationTest {
         Assert.assertEquals(isValid, errors.isEmpty());
     }
 
+    private void assertPath(String value, boolean isValid) {
+        Map<String, String> map = new HashMap<>();
+        map.put(fieldName, value);
+        List<Tuple2<String, String>> errors = CommonValidation.validatePath(map, fieldName);
+        Assert.assertEquals(isValid, errors.isEmpty());
+    }
+
     private void assertUrl(String value, boolean isValid) {
         Map<String, String> map = new HashMap<>();
         map.put(fieldName, value);
         List<Tuple2<String, String>> errors = CommonValidation.validateUrl(map, fieldName);
         Assert.assertEquals(isValid, errors.isEmpty());
+    }
+
+    private void assertValidPath(String value, boolean isValid) {
+        Assert.assertEquals(isValid, CommonValidation.validPath(value));
     }
 
     private void assertValues(List<Tuple2<String, String>> errors, List<Boolean> isValids) {
@@ -269,6 +280,16 @@ public class CommonValidationTest {
     }
 
     @Test
+    public void testValidatePath() {
+        assertPath("/user/bin/test.sh", true);
+        assertPath("/user/BIN/with space/test.sh", true);
+        assertPath("/user/bin/;test.sh", false);
+        assertPath("/user/&/test.sh", false);
+        assertPath("/user/b\"in/test.sh", false);
+        assertPath("abc@example.com", false);
+    }
+
+    @Test
     public void testValidateUrl() {
         assertUrl("http://example.com", true);
         assertUrl("http://example.com:80", true);
@@ -278,6 +299,16 @@ public class CommonValidationTest {
 
         assertUrl("https//example.com", false);
         assertUrl("example.com", false);
+    }
+
+    @Test
+    public void testValidPath() {
+        assertValidPath("/user/bin/test.sh", true);
+        assertValidPath("/user/BIN/with space/test.sh", true);
+        assertValidPath("/user/bin/;test.sh", false);
+        assertValidPath("/user/&/test.sh", false);
+        assertValidPath("/user/b\"in/test.sh", false);
+        assertValidPath("abc@example.com", false);
     }
 
 }

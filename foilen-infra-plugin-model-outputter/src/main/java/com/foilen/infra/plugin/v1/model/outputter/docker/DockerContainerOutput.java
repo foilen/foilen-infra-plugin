@@ -10,6 +10,8 @@
 package com.foilen.infra.plugin.v1.model.outputter.docker;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +40,6 @@ import com.foilen.smalltools.tools.FreemarkerTools;
 import com.foilen.smalltools.tools.JsonTools;
 import com.foilen.smalltools.tuple.Tuple2;
 import com.google.common.base.Strings;
-import com.google.common.io.Files;
 
 /**
  * To get different outputs from a {@link IPApplicationDefinition}.
@@ -268,7 +269,11 @@ public class DockerContainerOutput {
         }
         String outputDirectory = ctx.getOutputDirectory();
         if (Strings.isNullOrEmpty(outputDirectory)) {
-            outputDirectory = Files.createTempDir().getAbsolutePath();
+            try {
+                outputDirectory = Files.createTempDirectory(null).toFile().getAbsolutePath();
+            } catch (IOException e) {
+                throw new ModelException("Cannot create a temporary build folder", e);
+            }
             logger.info("[{}] The build output is not specified. Will use a temporary one {}", imageName, outputDirectory);
         }
         outputDirectory = DirectoryTools.pathTrailingSlash(outputDirectory);

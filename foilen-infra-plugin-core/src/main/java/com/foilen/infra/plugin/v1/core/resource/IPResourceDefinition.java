@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import com.foilen.infra.plugin.v1.model.resource.IPResource;
@@ -31,21 +33,21 @@ public class IPResourceDefinition {
     private String resourceType;
     private boolean embedded;
     private Set<String> primaryKeyProperties = new HashSet<>();
-    private Set<String> searchableProperties = new HashSet<>();
+    private SortedSet<String> propertyNames = new TreeSet<>();
 
     // Cached getters
     private Map<String, Method> getterMethodByPropertyName = new HashMap<>();
     private Map<String, Class<?>> returnTypeByPropertyName = new HashMap<>();
 
-    public IPResourceDefinition(Class<? extends IPResource> resourceClass, String resourceType, boolean isEmbedded, Collection<String> primaryKeyProperties, Collection<String> searchableProperties) {
-        commonConst(resourceClass, resourceType, isEmbedded, primaryKeyProperties, searchableProperties);
+    public IPResourceDefinition(Class<? extends IPResource> resourceClass, String resourceType, boolean isEmbedded, Collection<String> primaryKeyProperties) {
+        commonConst(resourceClass, resourceType, isEmbedded, primaryKeyProperties);
     }
 
-    public IPResourceDefinition(Class<? extends IPResource> resourceClass, String resourceType, Collection<String> primaryKeyProperties, Collection<String> searchableProperties) {
-        commonConst(resourceClass, resourceType, false, primaryKeyProperties, searchableProperties);
+    public IPResourceDefinition(Class<? extends IPResource> resourceClass, String resourceType, Collection<String> primaryKeyProperties) {
+        commonConst(resourceClass, resourceType, false, primaryKeyProperties);
     }
 
-    private void commonConst(Class<? extends IPResource> resourceClass, String resourceType, boolean isEmbedded, Collection<String> primaryKeyProperties, Collection<String> searchableProperties) {
+    private void commonConst(Class<? extends IPResource> resourceClass, String resourceType, boolean isEmbedded, Collection<String> primaryKeyProperties) {
         AssertTools.assertNotNull(resourceClass, "ResourceClass cannot be null");
         AssertTools.assertNotNull(resourceType, "ResourceType cannot be null");
         AssertTools.assertFalse(resourceType.isEmpty(), "ResourceType cannot be empty");
@@ -53,8 +55,6 @@ public class IPResourceDefinition {
         this.resourceType = resourceType;
         this.embedded = isEmbedded;
         this.primaryKeyProperties.addAll(primaryKeyProperties);
-        this.searchableProperties.addAll(primaryKeyProperties);
-        this.searchableProperties.addAll(searchableProperties);
 
         List<Method> methods = ReflectionTools.allMethods(resourceClass).stream() //
                 .filter(it -> {
@@ -97,10 +97,11 @@ public class IPResourceDefinition {
 
             getterMethodByPropertyName.put(name, method);
             returnTypeByPropertyName.put(name, method.getReturnType());
+            propertyNames.add(name);
         }
 
-        // Check all searchable fields are available
-        for (String propertyName : searchableProperties) {
+        // Check all primary key fields are available
+        for (String propertyName : primaryKeyProperties) {
             AssertTools.assertTrue(getterMethodByPropertyName.containsKey(propertyName), "The property " + propertyName + " does not exists");
         }
 
@@ -114,6 +115,10 @@ public class IPResourceDefinition {
         return getterMethodByPropertyName.get(propertyName);
     }
 
+    public SortedSet<String> getPropertyNames() {
+        return propertyNames;
+    }
+
     public Class<?> getPropertyType(String propertyName) {
         return returnTypeByPropertyName.get(propertyName);
     }
@@ -124,10 +129,6 @@ public class IPResourceDefinition {
 
     public String getResourceType() {
         return resourceType;
-    }
-
-    public Set<String> getSearchableProperties() {
-        return searchableProperties;
     }
 
     public boolean hasProperty(String propertyName) {

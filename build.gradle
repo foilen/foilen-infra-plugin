@@ -1,12 +1,4 @@
-buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-  }
-}
-
 plugins {
-  id "com.jfrog.bintray" version "$bintrayVersion"
   id 'io.spring.dependency-management' version "$springDependencyManagementVersion"
 }
 
@@ -16,25 +8,24 @@ allprojects {
 
   group = 'com.foilen'
   version = System.getenv('VERSION')?:'master-SNAPSHOT'
+  ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 }
 
 subprojects {
 
-  apply plugin: 'com.jfrog.bintray'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'maven'
-  apply plugin: 'maven-publish'
+  apply plugin: 'signing'
 
   apply plugin: 'java'
 
   repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
   }
 
-  sourceCompatibility = 1.11
+  sourceCompatibility = 11
 
   dependencyManagement {
     imports {
@@ -60,29 +51,16 @@ subprojects {
   }
 
   artifacts {
-    archives sourcesJar
-    archives javadocJar
+    archives javadocJar, sourcesJar
   }
+  
+  signing {
+	  required { isReleaseVersion && gradle.taskGraph.hasTask(":uploadArchives") }
+	  sign configurations.archives
+	}
   
   test {
     useJUnitPlatform()
   }
 
-}
-
-bintray {
-  user = System.getenv('BINTRAY_USER')
-  key = System.getenv('BINTRAY_KEY')
-
-  publish = true
-
-  pkg {
-    repo = 'maven'
-    userOrg = 'foilen'
-    name = 'com.foilen:foilen-infra-plugin'
-    licenses = ['MIT']
-    vcsUrl = 'https://github.com/foilen/foilen-infra-plugin.git'
-  }
-
-  publications = []
 }

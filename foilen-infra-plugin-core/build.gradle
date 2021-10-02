@@ -1,9 +1,6 @@
 dependencies {
 
   compile project(":foilen-infra-plugin-model-outputter")
-  compile "com.madgag.spongycastle:pg:$spongycastleVersion"
-  compile "com.madgag.spongycastle:pkix:$spongycastleVersion"
-  compile "com.madgag.spongycastle:prov:$spongycastleVersion"
   compile "commons-codec:commons-codec"
   compile "commons-validator:commons-validator:$commonsValidatorVersion"
   compile "org.bouncycastle:bcpg-jdk15on:$bouncycastleVersion"

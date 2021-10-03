@@ -1,43 +1,42 @@
 dependencies {
 
-  compile project(":foilen-infra-plugin-model-outputter")
-  compile "commons-codec:commons-codec"
-  compile "commons-validator:commons-validator:$commonsValidatorVersion"
-  compile "org.bouncycastle:bcpg-jdk15on:$bouncycastleVersion"
-  compile "org.bouncycastle:bcpkix-jdk15on:$bouncycastleVersion"
-  compile "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
-  compile "org.slf4j:slf4j-api"
-  compile "org.springframework:spring-beans"
+  api project(":foilen-infra-plugin-model-outputter")
+  api "commons-codec:commons-codec"
+  api "commons-validator:commons-validator:$commonsValidatorVersion"
+  api "org.bouncycastle:bcpg-jdk15on:$bouncycastleVersion"
+  api "org.bouncycastle:bcpkix-jdk15on:$bouncycastleVersion"
+  api "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
+  api "org.slf4j:slf4j-api"
+  api "org.springframework:spring-beans"
 
-  testCompileOnly 'junit:junit'
+  testImplementation 'junit:junit'
   testImplementation "org.junit.jupiter:junit-jupiter-api"
   testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 
 }
 
-uploadArchives {
+publishing {
   repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: System.getenv('OSSRH_USER'), password: System.getenv('OSSRH_PASS'))
+    maven {
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      credentials {
+        username = System.getenv('OSSRH_USER')
+        password = System.getenv('OSSRH_PASS')
       }
+    }
+  }
 
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: System.getenv('OSSRH_USER'), password: System.getenv('OSSRH_PASS'))
-      }
-
-      pom.project {
-        name = "foilen-infra-plugin-core"
-        packaging 'jar'
-        artifactId 'foilen-infra-plugin-core'
-        description 'The plugin development environment for Foilen Infra.'
-        url 'https://github.com/foilen/foilen-infra-plugin-core'
-
+  publications {
+    mavenJava(MavenPublication) {
+      pom {
+        name = 'foilen-infra-plugin-core'
+        description = 'The plugin development environment for Foilen Infra.'
+        url = 'https://github.com/foilen/foilen-infra-plugin-core'
+        from components.java
+        
         scm {
-          connection = "scm:git:git@github.com:foilen/foilen-infra-plugin-core.git"
-          url = "https://github.com/foilen/foilen-infra-plugin-core"
+          connection = "scm:git:git@github.com:foilen/foilen-infra-plugin.git"
+          url = "https://github.com/foilen/foilen-infra-plugin"
         }
 
         licenses {
@@ -49,12 +48,20 @@ uploadArchives {
 
         developers {
           developer {
-            id 'foilen'
-            name 'Simon Levesque'
-            email 'simon@foilen.com'
+            id = 'foilen'
+            name = 'Simon Levesque'
+            email = 'simon@foilen.com'
           }
         }
       }
     }
   }
 }
+
+signing {
+  sign publishing.publications.mavenJava
+}
+tasks.withType(Sign) {
+  onlyIf { isReleaseVersion }
+}
+

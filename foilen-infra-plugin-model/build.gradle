@@ -1,40 +1,39 @@
 dependencies {
 
-  compile "com.fasterxml.jackson.core:jackson-databind"
-  compile "com.foilen:jl-smalltools:$smalltoolsVersion"
-  compile "com.google.guava:guava:$guavaVersion"
-  compile "org.apache.commons:commons-lang3"
-  compile 'org.slf4j:slf4j-api'
+  api "com.fasterxml.jackson.core:jackson-databind"
+  api "com.foilen:jl-smalltools:$smalltoolsVersion"
+  api "com.google.guava:guava:$guavaVersion"
+  api "org.apache.commons:commons-lang3"
+  api 'org.slf4j:slf4j-api'
 
-  testCompileOnly 'junit:junit'
+  testImplementation 'junit:junit'
   testImplementation "org.junit.jupiter:junit-jupiter-api"
   testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 
 }
 
-uploadArchives {
+publishing {
   repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: System.getenv('OSSRH_USER'), password: System.getenv('OSSRH_PASS'))
+    maven {
+      url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      credentials {
+        username = System.getenv('OSSRH_USER')
+        password = System.getenv('OSSRH_PASS')
       }
+    }
+  }
 
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: System.getenv('OSSRH_USER'), password: System.getenv('OSSRH_PASS'))
-      }
-
-      pom.project {
-        name = "foilen-infra-plugin-model"
-        packaging 'jar'
-        artifactId 'foilen-infra-plugin-model'
-        description 'The plugin development environment for Foilen Infra.'
-        url 'https://github.com/foilen/foilen-infra-plugin-model'
-
+  publications {
+    mavenJava(MavenPublication) {
+      pom {
+        name = 'foilen-infra-plugin-model'
+        description = 'The plugin development environment for Foilen Infra.'
+        url = 'https://github.com/foilen/foilen-infra-plugin-model'
+        from components.java
+        
         scm {
-          connection = "scm:git:git@github.com:foilen/foilen-infra-plugin-model.git"
-          url = "https://github.com/foilen/foilen-infra-plugin-model"
+          connection = "scm:git:git@github.com:foilen/foilen-infra-plugin.git"
+          url = "https://github.com/foilen/foilen-infra-plugin"
         }
 
         licenses {
@@ -46,12 +45,20 @@ uploadArchives {
 
         developers {
           developer {
-            id 'foilen'
-            name 'Simon Levesque'
-            email 'simon@foilen.com'
+            id = 'foilen'
+            name = 'Simon Levesque'
+            email = 'simon@foilen.com'
           }
         }
       }
     }
   }
 }
+
+signing {
+  sign publishing.publications.mavenJava
+}
+tasks.withType(Sign) {
+  onlyIf { isReleaseVersion }
+}
+
